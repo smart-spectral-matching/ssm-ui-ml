@@ -24,7 +24,6 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.ServletHelper.RequestType;
 import com.vaadin.flow.shared.ApplicationConstants;
 
@@ -57,6 +56,7 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 	            //.successHandler(myAuthenticationSuccessHandler())
 	            
 	            
+	            
 	            // Add a custom authentication failure handler
 	            .and().exceptionHandling().authenticationEntryPoint(new AuthenticationEntryPoint() {
 
@@ -64,7 +64,6 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 					public void commence(HttpServletRequest arg0, HttpServletResponse arg1,
 							AuthenticationException arg2) throws IOException, ServletException {
 						
-						System.out.println("CONTEXT PATH " + arg0.getContextPath());
 						
 						//Redirect the user to the main page
 						String url = arg0.getServerName();
@@ -72,11 +71,11 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 						String login = "/login";
 						
 						if(arg0.getServerPort() == 80) {
-							url = "http://" + url + login;
+							url = "http://" + url + arg0.getContextPath() + login;
 						} else if(arg0.getServerPort() == 443) {
-							url = "https://" + url + login;
+							url = "https://" + url + arg0.getContextPath() + login;
 						} else {
-							url = "http://" + url + ":" + arg0.getServerPort() + login;
+							url = "http://" + url + ":" + arg0.getServerPort() + arg0.getContextPath() + login;
 						}
 						
 						arg1.sendRedirect(arg1.encodeRedirectURL(url));
