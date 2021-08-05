@@ -24,6 +24,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.ServletHelper.RequestType;
 import com.vaadin.flow.shared.ApplicationConstants;
 
@@ -55,6 +56,7 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 	            .loginProcessingUrl("/login")
 	            //.successHandler(myAuthenticationSuccessHandler())
 	            
+	            
 	            // Add a custom authentication failure handler
 	            .and().exceptionHandling().authenticationEntryPoint(new AuthenticationEntryPoint() {
 
@@ -62,16 +64,12 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 					public void commence(HttpServletRequest arg0, HttpServletResponse arg1,
 							AuthenticationException arg2) throws IOException, ServletException {
 						
+						System.out.println("CONTEXT PATH " + arg0.getContextPath());
+						
 						//Redirect the user to the main page
 						String url = arg0.getServerName();
 						
 						String login = "/login";
-						
-						//FIXME get the real full address
-						//Add sub-location to redirect
-						if(arg0.getServletPath().contains("/machine-learning")) {
-							login = "/machine-learning/login";
-						}
 						
 						if(arg0.getServerPort() == 80) {
 							url = "http://" + url + login;
