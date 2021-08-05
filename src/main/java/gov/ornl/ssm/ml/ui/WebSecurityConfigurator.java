@@ -65,18 +65,20 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 						//Redirect the user to the main page
 						String url = arg0.getServerName();
 						
+						String login = "/login";
+						
 						//FIXME get the real full address
 						//Add sub-location to redirect
 						if(arg0.getServletPath().contains("/machine-learning")) {
-							url += "/machine-learning";
+							login = "/machine-learning/login";
 						}
 						
 						if(arg0.getServerPort() == 80) {
-							url = "http://" + url + "/login";
+							url = "http://" + url + login;
 						} else if(arg0.getServerPort() == 443) {
-							url = "https://" + url + "/login";
+							url = "https://" + url + login;
 						} else {
-							url = "http://" + url + ":" + arg0.getServerPort() + "/login";
+							url = "http://" + url + ":" + arg0.getServerPort() + login;
 						}
 						
 						arg1.sendRedirect(arg1.encodeRedirectURL(url));
