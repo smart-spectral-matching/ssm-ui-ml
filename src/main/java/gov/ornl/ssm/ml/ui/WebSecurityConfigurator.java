@@ -35,7 +35,7 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 		http.csrf().disable()
 			.requestCache().requestCache(new HttpSessionRequestCache())
 			.and().authorizeRequests()
-//			.anyRequest().permitAll();
+			.anyRequest().permitAll()
 				.antMatchers("**/login").permitAll()
 				
 				.requestMatchers(request -> {
