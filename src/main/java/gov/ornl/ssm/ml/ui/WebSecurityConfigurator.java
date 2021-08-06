@@ -64,7 +64,23 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 					public void commence(HttpServletRequest arg0, HttpServletResponse arg1,
 							AuthenticationException arg2) throws IOException, ServletException {
 						
-						String url = arg0.getServletContext().getContextPath() + ("/login");
+						
+						//Redirect the user to the main page
+						String url = arg0.getServerName();
+						
+						String login = "/login";
+						
+						if(arg0.getServerPort() == 80) {
+							url = "http://" + url + arg0.getContextPath() + login;
+						} else if(arg0.getServerPort() == 443) {
+							url = "https://" + url + arg0.getContextPath() + login;
+						} else {
+							url = "http://" + url + ":" + arg0.getServerPort() + arg0.getContextPath() + login;
+						}
+						
+						//url = arg0.getServletContext().getContextPath() + ("/login");
+						url = "http://ssm-dev.ornl.gov/machine-learning/login?url" + url + "&context=" + arg0.getContextPath();
+						
 						arg1.sendRedirect(arg1.encodeRedirectURL(url));
 						
 					}
