@@ -3,10 +3,12 @@ package gov.ornl.ssm.ml.ui;
 import java.io.IOException;
 import java.util.stream.Stream;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,6 +32,10 @@ import com.vaadin.flow.shared.ApplicationConstants;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
+	
+    @Autowired
+    private ServletContext servletContext;
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable()
@@ -81,11 +87,13 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 						//url = arg0.getServletContext().getContextPath() + ("/login");
 						//url = "http://ssm-dev.ornl.gov/machine-learning/login?url=" + url + "&context=" + arg0.getContextPath();
 						
-						arg1.sendRedirect(arg1.encodeRedirectURL("/login"));
+						arg1.sendRedirect(arg1.encodeRedirectURL(servletContext.getContextPath() + "/login"));
 						
 					}
 	            	
 	            })
+	            
+	            
 	            
 	            // Logging out also redirects to main page
 	            .and().logout().logoutSuccessUrl("/");
