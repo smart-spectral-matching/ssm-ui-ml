@@ -36,7 +36,7 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 			.requestCache().requestCache(new HttpSessionRequestCache())
 			.and().authorizeRequests()
 			.anyRequest().permitAll()
-				.antMatchers("**/login").permitAll()
+				.antMatchers("/login").permitAll()
 				
 				.requestMatchers(request -> {
 					final String parameterValue = request.getParameter(ApplicationConstants.REQUEST_TYPE_PARAMETER);
@@ -79,9 +79,9 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 						}
 						
 						//url = arg0.getServletContext().getContextPath() + ("/login");
-						url = "http://ssm-dev.ornl.gov/machine-learning/login?url" + url + "&context=" + arg0.getContextPath();
+						//url = "http://ssm-dev.ornl.gov/machine-learning/login?url=" + url + "&context=" + arg0.getContextPath();
 						
-						arg1.sendRedirect(arg1.encodeRedirectURL(url));
+						arg1.sendRedirect(arg1.encodeRedirectURL("/login"));
 						
 					}
 	            	
