@@ -71,6 +71,7 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 							AuthenticationException arg2) throws IOException, ServletException {
 						
 						
+						
 						//Redirect the user to the main page
 						String url = arg0.getServerName();
 						
@@ -87,7 +88,7 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 						//url = arg0.getServletContext().getContextPath() + ("/login");
 						//url = "http://ssm-dev.ornl.gov/machine-learning/login?url=" + url + "&context=" + arg0.getContextPath();
 						
-						arg1.sendRedirect(arg1.encodeRedirectURL(servletContext.getContextPath() + "/login"));
+						arg1.sendRedirect(arg1.encodeRedirectURL(servletContext.getContextPath() + "/login?error=" + arg2.getMessage()));
 						
 					}
 	            	
