@@ -78,6 +78,9 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 							url = "http://" + url + ":" + arg0.getServerPort() + arg0.getContextPath() + login;
 						}
 						
+						//url = arg0.getServletContext().getContextPath() + ("/login");
+						url = "http://ssm-dev.ornl.gov/machine-learning/login?url" + url + "&context=" + arg0.getContextPath();
+						
 						arg1.sendRedirect(arg1.encodeRedirectURL(url));
 						
 					}
