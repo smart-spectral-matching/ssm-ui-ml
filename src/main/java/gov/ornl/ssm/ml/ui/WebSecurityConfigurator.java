@@ -42,7 +42,7 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 			.requestCache().requestCache(new HttpSessionRequestCache())
 			.and().authorizeRequests()
 			.anyRequest().permitAll()
-				.antMatchers(servletContext.getContextPath() + "/login").permitAll()
+				.antMatchers("/login").permitAll()
 				
 				.requestMatchers(request -> {
 					final String parameterValue = request.getParameter(ApplicationConstants.REQUEST_TYPE_PARAMETER);
@@ -57,8 +57,8 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 				.anyRequest().authenticated()
 				
 		        .and().formLogin()
-	            .loginPage(servletContext.getContextPath() + "/login")
-	            .loginProcessingUrl(servletContext.getContextPath() + "/login")
+	            .loginPage("/login")
+	            .loginProcessingUrl("/login")
 	            //.successHandler(myAuthenticationSuccessHandler())
 	            
 	            
