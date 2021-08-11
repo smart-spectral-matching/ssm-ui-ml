@@ -42,7 +42,7 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 			.requestCache().requestCache(new HttpSessionRequestCache())
 			.and().authorizeRequests()
 			.anyRequest().permitAll()
-				.antMatchers("/login").permitAll()
+				.antMatchers("**/login").permitAll()
 				
 				.requestMatchers(request -> {
 					final String parameterValue = request.getParameter(ApplicationConstants.REQUEST_TYPE_PARAMETER);
