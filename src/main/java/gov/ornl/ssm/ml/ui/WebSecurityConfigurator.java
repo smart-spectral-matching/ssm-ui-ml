@@ -32,111 +32,77 @@ import com.vaadin.flow.shared.ApplicationConstants;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
-	
-    @Autowired
-    private ServletContext servletContext;
-	
+
+	@Autowired
+	private ServletContext servletContext;
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable()
-			.requestCache().requestCache(new HttpSessionRequestCache())
-			.and().authorizeRequests()
+		http.csrf().disable().requestCache().requestCache(new HttpSessionRequestCache()).and().authorizeRequests()
 				.antMatchers("**/login").permitAll()
-				
+
 				.requestMatchers(request -> {
 					final String parameterValue = request.getParameter(ApplicationConstants.REQUEST_TYPE_PARAMETER);
-	            	if(request.getServletPath().equals("/favicon.ico")) return true;
-	            	if(request.getServletPath().startsWith("/VAADIN/")) return true;
-	            	if(request.getServletPath().startsWith("/vaadinServlet")) return true;
-	            	if(request.getServletPath().endsWith("/login")) return true;
-	            	if(request.getMethod().equals("POST")) return true;
-	            	return parameterValue != null
-	        				&& Stream.of(RequestType.values()).anyMatch(r -> r.getIdentifier().equals(parameterValue));	
+					if (request.getServletPath().equals("/favicon.ico"))
+						return true;
+					if (request.getServletPath().startsWith("/VAADIN/"))
+						return true;
+					if (request.getServletPath().startsWith("/vaadinServlet"))
+						return true;
+					if (request.getServletPath().endsWith("/login"))
+						return true;
+					if (request.getMethod().equals("POST"))
+						return true;
+					return parameterValue != null
+							&& Stream.of(RequestType.values()).anyMatch(r -> r.getIdentifier().equals(parameterValue));
 
 				}).permitAll()
-				
+
 				.anyRequest().authenticated()
-				
-		        .and().formLogin()
-	            .loginPage("/login")
-	            .loginProcessingUrl("/login")
-	            //.successHandler(myAuthenticationSuccessHandler())
-	            
-	            
-	            
-	            // Add a custom authentication failure handler
-	            .and().exceptionHandling().authenticationEntryPoint(new AuthenticationEntryPoint() {
+
+				.and().formLogin().loginPage("/login").loginProcessingUrl("/login")
+
+				// Add a custom authentication failure handler
+				.and().exceptionHandling().authenticationEntryPoint(new AuthenticationEntryPoint() {
 
 					@Override
 					public void commence(HttpServletRequest arg0, HttpServletResponse arg1,
 							AuthenticationException arg2) throws IOException, ServletException {
-						
-						
-						
-						//Redirect the user to the main page
+
+						// Redirect the user to the main page
 						String url = arg0.getServerName();
-						
+
 						String login = "/login";
-						
-						if(arg0.getServerPort() == 80) {
+
+						if (arg0.getServerPort() == 80) {
 							url = "http://" + url + arg0.getContextPath() + login;
-						} else if(arg0.getServerPort() == 443) {
+						} else if (arg0.getServerPort() == 443) {
 							url = "https://" + url + arg0.getContextPath() + login;
 						} else {
 							url = "http://" + url + ":" + arg0.getServerPort() + arg0.getContextPath() + login;
 						}
-						
-						//url = arg0.getServletContext().getContextPath() + ("/login");
-						//url = "http://ssm-dev.ornl.gov/machine-learning/login?url=" + url + "&context=" + arg0.getContextPath();
-						
-						
-						
-						arg1.sendRedirect(arg1.encodeRedirectURL(servletContext.getContextPath() + "/login?error=" + arg2.getMessage()));
-						
+
+						arg1.sendRedirect(arg1.encodeRedirectURL(servletContext.getContextPath() + "/login"));
+
 					}
-	            	
-	            })
-	            
-	            
-	            
-	            // Logging out also redirects to main page
-	            .and().logout().logoutSuccessUrl("/");
+
+				})
+
+				// Logging out also redirects to main page
+				.and().logout().logoutSuccessUrl("/");
 
 	}
 
-	  @Override
-	  public void configure(AuthenticationManagerBuilder auth) throws Exception {
-	    auth
-	      .ldapAuthentication()
-	        .userDnPatterns("uid={0},ou=Users")
-	        //.groupSearchBase("dc=xcams,dc=ornl,dc=gov")
-	        //.groupSearchBase("ou=groups")
-	        .contextSource()
-	          .url("ldaps://ldapx.ornl.gov/dc=xcams,dc=ornl,dc=gov")
-	        //  .and()
-	        //.passwordCompare()
-	          //.passwordEncoder(new BCryptPasswordEncoder())
-	          //.passwordAttribute("password");
-	          ;
-	    
-	  }
-	
-	   @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
-	   @Override
-	   public AuthenticationManager authenticationManagerBean() throws Exception {
-	       return super.authenticationManagerBean();
-	   }
-	  
-//	@Bean
-//	@Override
-//	public UserDetailsService userDetailsService() {
-//		UserDetails user =
-//			 User.withDefaultPasswordEncoder()
-//				.username("user")
-//				.password("password")
-//				.roles("USER")
-//				.build();
-//
-//		return new InMemoryUserDetailsManager(user);
-//	}
+	@Override
+	public void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.ldapAuthentication().userDnPatterns("uid={0},ou=Users").contextSource()
+				.url("ldaps://ldapx.ornl.gov/dc=xcams,dc=ornl,dc=gov");
+
+	}
+
+	@Bean(name = BeanIds.AUTHENTICATION_MANAGER)
+	@Override
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
+	}
 }
