@@ -106,18 +106,18 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 
 	  @Override
 	  public void configure(AuthenticationManagerBuilder auth) throws Exception {
-//	    auth
-//	      .ldapAuthentication()
-//	        .userDnPatterns("uid={0},ou=Users")
-//	        //.groupSearchBase("ou=groups")
-//	        .contextSource()
-//	          .url("ldaps://ldapu.ornl.gov/dc=ornl,dc=gov")
-//	        //  .and()
-//	        //.passwordCompare()
-//	          //.passwordEncoder(new BCryptPasswordEncoder())
-//	          //.passwordAttribute("password");
-//	          ;
-		  auth.inMemoryAuthentication().withUser("r8s").password("{noop}test").roles("USER");
+	    auth
+	      .ldapAuthentication()
+	        .userDnPatterns("uid={0},ou=Users")
+	        //.groupSearchBase("dc=xcams,dc=ornl,dc=gov")
+	        //.groupSearchBase("ou=groups")
+	        .contextSource()
+	          .url("ldaps://ldapx.ornl.gov/dc=xcams,dc=ornl,dc=gov")
+	        //  .and()
+	        //.passwordCompare()
+	          //.passwordEncoder(new BCryptPasswordEncoder())
+	          //.passwordAttribute("password");
+	          ;
 	    
 	  }
 	
