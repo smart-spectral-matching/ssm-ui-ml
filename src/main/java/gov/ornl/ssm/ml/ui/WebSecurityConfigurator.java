@@ -60,7 +60,7 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 				
 		        .and().formLogin()
 	            .loginPage("/login")
-	            .loginProcessingUrl("/login")
+	            .loginProcessingUrl("/machine-learning/login")
 	            //.successHandler(myAuthenticationSuccessHandler())
 	            
 	            
