@@ -44,7 +44,6 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 				.antMatchers("**/login").permitAll()
 				
 				.requestMatchers(request -> {
-					if(true) return true;
 					final String parameterValue = request.getParameter(ApplicationConstants.REQUEST_TYPE_PARAMETER);
 	            	if(request.getServletPath().equals("/favicon.ico")) return true;
 	            	if(request.getServletPath().startsWith("/VAADIN/")) return true;
@@ -60,7 +59,7 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 				
 		        .and().formLogin()
 	            .loginPage("/login")
-	            .loginProcessingUrl("/machine-learning/login")
+	            .loginProcessingUrl("/login")
 	            //.successHandler(myAuthenticationSuccessHandler())
 	            
 	            
@@ -107,17 +106,18 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 
 	  @Override
 	  public void configure(AuthenticationManagerBuilder auth) throws Exception {
-	    auth
-	      .ldapAuthentication()
-	        .userDnPatterns("uid={0},ou=Users")
-	        //.groupSearchBase("ou=groups")
-	        .contextSource()
-	          .url("ldaps://ldapu.ornl.gov/dc=ornl,dc=gov")
-	        //  .and()
-	        //.passwordCompare()
-	          //.passwordEncoder(new BCryptPasswordEncoder())
-	          //.passwordAttribute("password");
-	          ;
+//	    auth
+//	      .ldapAuthentication()
+//	        .userDnPatterns("uid={0},ou=Users")
+//	        //.groupSearchBase("ou=groups")
+//	        .contextSource()
+//	          .url("ldaps://ldapu.ornl.gov/dc=ornl,dc=gov")
+//	        //  .and()
+//	        //.passwordCompare()
+//	          //.passwordEncoder(new BCryptPasswordEncoder())
+//	          //.passwordAttribute("password");
+//	          ;
+		  auth.inMemoryAuthentication().withUser("r8s").password("test").roles("USER");
 	    
 	  }
 	
