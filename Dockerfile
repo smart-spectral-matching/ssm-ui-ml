@@ -14,6 +14,6 @@ RUN pip3 install ssm-ml --extra-index-url https://__token__:$GITLAB_PASSWORD@cod
 
 ADD . ./
 
-RUN maven dependency:go-offline
+RUN mvn dependency:go-offline
 
 CMD [ "mvn", "spring-boot:run", "-Pdev" ]
