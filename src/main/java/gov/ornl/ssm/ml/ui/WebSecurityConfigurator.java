@@ -49,7 +49,7 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 	            	if(request.getServletPath().startsWith("/VAADIN/")) return true;
 	            	if(request.getServletPath().startsWith("/vaadinServlet")) return true;
 	            	if(request.getServletPath().endsWith("/login")) return true;
-	            	if(request.getServletPath().endsWith("/") && request.getMethod().equals("POST")) return true;
+	            	if(request.getMethod().equals("POST")) return true;
 	            	return parameterValue != null
 	        				&& Stream.of(RequestType.values()).anyMatch(r -> r.getIdentifier().equals(parameterValue));	
 
