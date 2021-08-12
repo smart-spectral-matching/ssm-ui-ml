@@ -117,7 +117,7 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 //	          //.passwordEncoder(new BCryptPasswordEncoder())
 //	          //.passwordAttribute("password");
 //	          ;
-		  auth.inMemoryAuthentication().withUser("r8s").password("test").roles("USER");
+		  auth.inMemoryAuthentication().withUser("r8s").password("{noop}test").roles("USER");
 	    
 	  }
 	
