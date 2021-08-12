@@ -41,7 +41,6 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 		http.csrf().disable()
 			.requestCache().requestCache(new HttpSessionRequestCache())
 			.and().authorizeRequests()
-			.anyRequest().permitAll()
 				.antMatchers("**/login").permitAll()
 				
 				.requestMatchers(request -> {
@@ -49,6 +48,7 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 	            	if(request.getServletPath().equals("/favicon.ico")) return true;
 	            	if(request.getServletPath().startsWith("/VAADIN/")) return true;
 	            	if(request.getServletPath().startsWith("/vaadinServlet")) return true;
+	            	if(request.getServletPath().endsWith("/login")) return true;
 	            	return parameterValue != null
 	        				&& Stream.of(RequestType.values()).anyMatch(r -> r.getIdentifier().equals(parameterValue));	
 
@@ -87,6 +87,8 @@ public class WebSecurityConfigurator extends WebSecurityConfigurerAdapter {
 						
 						//url = arg0.getServletContext().getContextPath() + ("/login");
 						//url = "http://ssm-dev.ornl.gov/machine-learning/login?url=" + url + "&context=" + arg0.getContextPath();
+						
+						
 						
 						arg1.sendRedirect(arg1.encodeRedirectURL(servletContext.getContextPath() + "/login?error=" + arg2.getMessage()));
 						
