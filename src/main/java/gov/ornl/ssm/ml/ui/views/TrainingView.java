@@ -86,7 +86,7 @@ public class TrainingView extends VerticalLayout {
 	@PostConstruct
 	public void init() {
 
-		try {
+		
 		ObjectMapper mapper = new ObjectMapper();
 
 		// The filter to be defined
@@ -97,7 +97,7 @@ public class TrainingView extends VerticalLayout {
 
 		// List of all models from the CURIES database
 		models = new ArrayList<Model>();
-
+		try {
 		try {
 
 			// Get the model digest from the backend
@@ -121,7 +121,6 @@ public class TrainingView extends VerticalLayout {
 		try {
 			
 			//Strip out the pagination data, leaving only the raw models
-			add(new Label(jsonModels));
 			String modelsString = mapper.writeValueAsString(mapper.readTree(jsonModels).get("data"));
 			
 			//Convert the model data back to JSON, then read the JSON into classes
@@ -286,6 +285,9 @@ public class TrainingView extends VerticalLayout {
 		
 		}
 		catch (NullPointerException e) {
+			
+
+			add(new Label(jsonModels));
 			add(new Label(e.getMessage()));
 			
 			
