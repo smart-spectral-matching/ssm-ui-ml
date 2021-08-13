@@ -116,6 +116,8 @@ public class TrainingView extends VerticalLayout {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+			add(new Label(config.getFusekiHost()
+					+ "/api/datasets/curies/models"));
 			add(new Label(e.getMessage()));
 			
 			
