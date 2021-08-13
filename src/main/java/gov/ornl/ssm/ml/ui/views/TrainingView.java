@@ -116,6 +116,12 @@ public class TrainingView extends VerticalLayout {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+			add(new Label(e.getMessage()));
+			
+			
+			for(int i = 0; i < e.getStackTrace().length; i++) {
+			add(new Label(e.getStackTrace()[i].toString()));
+			}
 		}
 
 		try {
@@ -160,12 +166,7 @@ public class TrainingView extends VerticalLayout {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			add(new Label(e.getMessage()));
-			
-			
-			for(int i = 0; i < e.getStackTrace().length; i++) {
-			add(new Label(e.getStackTrace()[i].toString()));
-			}
+
 		}
 
 		//A grid to display all models
