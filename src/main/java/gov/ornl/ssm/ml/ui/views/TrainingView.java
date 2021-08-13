@@ -121,6 +121,7 @@ public class TrainingView extends VerticalLayout {
 		try {
 			
 			//Strip out the pagination data, leaving only the raw models
+			add(new Label(jsonModels));
 			String modelsString = mapper.writeValueAsString(mapper.readTree(jsonModels).get("data"));
 			
 			//Convert the model data back to JSON, then read the JSON into classes
