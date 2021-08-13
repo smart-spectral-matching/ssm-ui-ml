@@ -86,6 +86,7 @@ public class TrainingView extends VerticalLayout {
 	@PostConstruct
 	public void init() {
 
+		try {
 		ObjectMapper mapper = new ObjectMapper();
 
 		// The filter to be defined
@@ -281,6 +282,16 @@ public class TrainingView extends VerticalLayout {
 		add(labelFeaturesButton);
 		add(runButton);
 		add(outputLabel);
+		
+		}
+		catch (NullPointerException e) {
+			add(new Label(e.getMessage()));
+			
+			
+			for(int i = 0; i < e.getStackTrace().length; i++) {
+			add(new Label(e.getStackTrace()[i].toString()));
+			}
+		}
 	}
 
 }
