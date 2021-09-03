@@ -8,17 +8,17 @@ package gov.ornl.ssm.ml.ui.data;
  */
 public class Methodology {
 
-	private String evalutationMethod;
+	private String evaluationMethod;
 
 	public Methodology() {
-		evalutationMethod = null;
+		evaluationMethod = null;
 	}
 
-	public String getEvalutationMethod() {
-		return evalutationMethod;
+	public String getEvaluationMethod() {
+		return evaluationMethod;
 	}
 
-	public void setEvalutationMethod(String evalutationMethod) {
-		this.evalutationMethod = evalutationMethod;
+	public void setEvaluationMethod(String evalutationMethod) {
+		this.evaluationMethod = evalutationMethod;
 	}
 }

@@ -16,4 +16,4 @@ ADD . ./
 
 RUN mvn dependency:go-offline
 
-CMD [ "mvn", "spring-boot:run", "-Pdev" ]
+CMD [ "sh", "-c", "mvn spring-boot:run -P$PROFILE" ]

@@ -94,13 +94,13 @@ public class PeakLocationRangeFeature implements Feature {
 				filter.getFeatures().set(index,
 						Arrays.asList("scidata", "dataseries",
 								"SSM:XY:axis:PEAK-LOC-RANGE-" + startField.getValue() + "-" + endField.getValue(),
-								"valuearray", "numberarray"));
+								"parameter", "numericValueArray", "numberArray"));
 				
 				//Update all models' validity
 				for(Model model : models) {
 					
 					//Get the x axis
-					List<Double> axis = model.getScidata().getDataseries().getxAxis().getParameter().getValuearray().getNumberarray();
+					List<Double> axis = model.getScidata().getDataseries().get(0).getxAxis().getParameter().getNumericValueArray().getNumberArray();
 					
 					//If the defined range is entirely outside the axis's range, this model is invalid.
 					if(axis.get(0) > endField.getValue() || axis.get(axis.size() - 1) < startField.getValue()) {

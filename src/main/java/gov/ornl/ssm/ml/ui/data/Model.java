@@ -15,6 +15,8 @@ public class Model {
 
 	private String created;
 	
+	private String full;
+	
 	private String label;
 	
 	private String modified;
@@ -31,6 +33,7 @@ public class Model {
 	
 	public Model() {
 		setCreated(null);
+		full = "";
 		setLabel("");
 		setModified(null);
 		setScidata(null);
@@ -46,6 +49,14 @@ public class Model {
 
 	public void setCreated(String created) {
 		this.created = created;
+	}
+
+	public String getFull() {
+		return full;
+	}
+
+	public void setFull(String full) {
+		this.full = full;
 	}
 
 	public String getModified() {

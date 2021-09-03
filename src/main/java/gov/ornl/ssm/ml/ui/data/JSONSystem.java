@@ -9,11 +9,11 @@ import java.util.List;
  * @author Robert Smith
  *
  */
-public class System {
+public class JSONSystem {
 
 	private List<Facet> facets;
 
-	public System() {
+	public JSONSystem() {
 		facets = new ArrayList<Facet>();
 	}
 

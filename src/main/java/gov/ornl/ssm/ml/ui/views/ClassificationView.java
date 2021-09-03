@@ -49,12 +49,13 @@ public class ClassificationView extends VerticalLayout {
 	public void init() {
 
 		ArrayList<String> names = new ArrayList<String>();
-		
 		try {
 			Connection conn = DriverManager.getConnection("jdbc:postgresql://" + config.getDatabaseHost() + ":5432/ssm",
 			        "postgres", "postgres");
 			
 			ResultSet results = conn.createStatement().executeQuery("SELECT name FROM models");
+			
+			System.out.println("RESULTS");
 			
 			while(results.next()) {
 				names.add(results.getString("name"));
@@ -62,6 +63,11 @@ public class ClassificationView extends VerticalLayout {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			add(new Label(e.getMessage()));
+
+			for (int i = 0; i < e.getStackTrace().length; i++) {
+				add(new Label(e.getStackTrace()[i].toString()));
+			}
 		}
 		
 		// Selector for the machine learning model
@@ -75,7 +81,7 @@ public class ClassificationView extends VerticalLayout {
 			try {
 				Connection conn = DriverManager.getConnection("jdbc:postgresql://" + config.getDatabaseHost() + ":5432/ssm",
 				        "postgres", "postgres");
-				ResultSet results = conn.createStatement().executeQuery("SELECT name FROM models WHERE name = " + classifierSelect.getValue());
+				ResultSet results = conn.createStatement().executeQuery("SELECT description FROM models WHERE name = '" + classifierSelect.getValue() + "'");
 				
 				if(results.next()) {
 				

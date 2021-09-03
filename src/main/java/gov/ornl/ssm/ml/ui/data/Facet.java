@@ -9,15 +9,18 @@ package gov.ornl.ssm.ml.ui.data;
 public class Facet {
 
 	private String atoms;
+	
+	private String formula;
 
 	private String materialType;
 
 	private String multiplicity;
 
 	public Facet() {
-		atoms = null;
-		materialType = null;
-		multiplicity = null;
+		atoms = "";
+		formula = "";
+		materialType = "";
+		multiplicity = "";
 	}
 
 	public String getAtoms() {
@@ -26,6 +29,14 @@ public class Facet {
 
 	public void setAtoms(String atoms) {
 		this.atoms = atoms;
+	}
+
+	public String getFormula() {
+		return formula;
+	}
+
+	public void setFormula(String formula) {
+		this.formula = formula;
 	}
 
 	public String getMaterialType() {

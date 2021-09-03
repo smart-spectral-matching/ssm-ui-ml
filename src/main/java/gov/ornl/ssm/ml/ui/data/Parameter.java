@@ -12,12 +12,12 @@ public class Parameter {
 
 	private String quantity;
 
-	private ValueArray valuearray;
+	private ValueArray numericValueArray;
 
 	public Parameter() {
 		property = null;
 		quantity = null;
-		valuearray = null;
+		numericValueArray = null;
 	}
 
 	public String getProperty() {
@@ -36,11 +36,11 @@ public class Parameter {
 		this.quantity = quantity;
 	}
 
-	public ValueArray getValuearray() {
-		return valuearray;
+	public ValueArray getNumericValueArray() {
+		return numericValueArray;
 	}
 
-	public void setValuearray(ValueArray valuearray) {
-		this.valuearray = valuearray;
+	public void setNumericValueArray(ValueArray valuearray) {
+		this.numericValueArray = valuearray;
 	}
 }

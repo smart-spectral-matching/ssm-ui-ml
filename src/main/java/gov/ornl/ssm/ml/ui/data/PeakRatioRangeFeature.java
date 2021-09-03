@@ -94,11 +94,11 @@ public class PeakRatioRangeFeature implements Feature {
 				filter.getFeatures().set(index,
 						Arrays.asList("scidata", "dataseries",
 								"SSM:XY:axis:PEAK-RAITO-RANGE-" + startField.getValue() + "-" + endField.getValue(),
-								"valuearray", "numberarray"));
+								"parameter", "numericValueArray", "numberArray"));
 				
 				//Update all models' validity
 				for(Model model : models) {
-					List<Double> axis = model.getScidata().getDataseries().getxAxis().getParameter().getValuearray().getNumberarray();
+					List<Double> axis = model.getScidata().getDataseries().get(0).getxAxis().getParameter().getNumericValueArray().getNumberArray();
 					
 					//If the feature range is at least partially covered by the data, it is valid
 					if(axis.get(0) > endField.getValue() || axis.get(axis.size() - 1) < startField.getValue()) {

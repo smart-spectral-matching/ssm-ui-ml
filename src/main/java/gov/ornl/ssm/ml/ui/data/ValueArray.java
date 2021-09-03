@@ -11,18 +11,29 @@ import java.util.List;
  */
 public class ValueArray {
 
-	private List<Double> numberarray;
+	private List<Double> numberArray;
+	
+	private String unitref;
 
 	public ValueArray() {
-		setNumberarray(new ArrayList<Double>());
+		setNumberArray(new ArrayList<Double>());
+		unitref = "";
 	}
 
-	public List<Double> getNumberarray() {
-		return numberarray;
+	public List<Double> getNumberArray() {
+		return numberArray;
 	}
 
-	public void setNumberarray(List<Double> numberarray) {
-		this.numberarray = numberarray;
+	public void setNumberArray(List<Double> numberarray) {
+		this.numberArray = numberarray;
+	}
+
+	public String getUnitref() {
+		return unitref;
+	}
+
+	public void setUnitref(String unitref) {
+		this.unitref = unitref;
 	}
 
 }
