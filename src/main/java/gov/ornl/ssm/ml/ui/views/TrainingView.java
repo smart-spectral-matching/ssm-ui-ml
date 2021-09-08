@@ -134,8 +134,7 @@ public class TrainingView extends VerticalLayout {
 					if(urlString.endsWith("/")) {
 						urlString = urlString.substring(0, urlString.lastIndexOf("/"));
 					}
-					add(new Label(urlString));
-					
+
 					// Get the model digest from the backend
 					URL url = new URL(urlString);
 					HttpURLConnection conn = (HttpURLConnection) url.openConnection();
