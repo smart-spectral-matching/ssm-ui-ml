@@ -95,7 +95,9 @@ public class TrainingView extends VerticalLayout {
 				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 				conn.setRequestMethod("GET");
 				BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
+				add(new Label(config.getFusekiHost() + "/api/datasets/curies/models"));
+				
+				
 				// Read the results into the string
 				String line = reader.readLine();
 
@@ -103,6 +105,7 @@ public class TrainingView extends VerticalLayout {
 					jsonModels += line;
 					line = reader.readLine();
 				}
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 				add(new Label(e.getMessage()));
@@ -159,6 +162,33 @@ public class TrainingView extends VerticalLayout {
 					add(new Label(e.getStackTrace()[i].toString()));
 				}
 
+			}
+			
+			try {
+
+				// Get the model digest from the backend
+				URL url = new URL(config.getFusekiHost() + "/api/datasets/curies/models");
+				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+				conn.setRequestMethod("GET");
+				BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+				add(new Label(config.getFusekiHost() + "/api/datasets/curies/models"));
+				
+				
+				// Read the results into the string
+				String line = reader.readLine();
+
+				while (line != null) {
+					jsonModels += line;
+					line = reader.readLine();
+				}
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+				add(new Label(e.getMessage()));
+
+				for (int i = 0; i < e.getStackTrace().length; i++) {
+					add(new Label(e.getStackTrace()[i].toString()));
+				}
 			}
 
 			// A grid to display all models
