@@ -129,6 +129,9 @@ public class TrainingView extends VerticalLayout {
 					//Change the urls to point to the fuseki host
 					String urlString = temp.getUrl();
 					urlString = config.getFusekiHost() + urlString.substring(urlString.indexOf(".gov") + 4);
+					if(urlString.endsWith("/")) {
+						urlString = urlString.substring(0, urlString.length());
+					}
 					add(new Label(urlString));
 					
 					// Get the model digest from the backend
