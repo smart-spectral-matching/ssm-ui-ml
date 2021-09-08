@@ -130,7 +130,7 @@ public class TrainingView extends VerticalLayout {
 					String urlString = temp.getUrl();
 					urlString = config.getFusekiHost() + urlString.substring(urlString.indexOf(".gov") + 4);
 					if(urlString.endsWith("/")) {
-						urlString = urlString.substring(0, urlString.length());
+						urlString = urlString.substring(0, urlString.lastIndexOf("/"));
 					}
 					add(new Label(urlString));
 					
