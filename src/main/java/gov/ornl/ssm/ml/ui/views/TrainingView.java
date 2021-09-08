@@ -91,7 +91,6 @@ public class TrainingView extends VerticalLayout {
 			try {
 
 				// Get the model digest from the backend
-				add(new Label("URL: " + config.getFusekiHost() + "/api/datasets/curies/models"));
 				URL url = new URL(config.getFusekiHost() + "/api/datasets/curies/models");
 				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 				conn.setRequestMethod("GET");
@@ -126,6 +125,11 @@ public class TrainingView extends VerticalLayout {
 				for(Model temp : tempModels) {
 					
 					String modelString = "";
+					
+					//Change the urls to point to the fuseki host
+					String urlString = temp.getUrl();
+					urlString = config.getFusekiHost() + urlString.substring(urlString.indexOf(".gov") + 4);
+					add(new Label(urlString));
 					
 					// Get the model digest from the backend
 					URL url = new URL(temp.getUrl());
