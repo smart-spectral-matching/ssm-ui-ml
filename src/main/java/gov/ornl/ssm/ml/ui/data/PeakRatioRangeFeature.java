@@ -67,7 +67,7 @@ public class PeakRatioRangeFeature implements Feature {
 		
 		//If the filter already has a definition for the filter, initialize the fields
 		for(String feature : filter.getFeatures().get(index)) {
-			if(feature.startsWith("SSM:XY:axis:PEAK-RAITO-RANGE-")) {
+			if(feature.startsWith("SSM:XY:axis:PEAK-RATIO-RANGE-")) {
 				String[] tokens = feature.split("-");
 				
 				startField.setValue(Double.valueOf(tokens[3]));
@@ -93,7 +93,7 @@ public class PeakRatioRangeFeature implements Feature {
 				// Set the filter path according to the range values
 				filter.getFeatures().set(index,
 						Arrays.asList("scidata", "dataseries",
-								"SSM:XY:axis:PEAK-RAITO-RANGE-" + startField.getValue() + "-" + endField.getValue(),
+								"SSM:XY:axis:PEAK-RATIO-RANGE-" + startField.getValue() + "-" + endField.getValue(),
 								"parameter", "numericValueArray", "numberArray"));
 				
 				//Update all models' validity

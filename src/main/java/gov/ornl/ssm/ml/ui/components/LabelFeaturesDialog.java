@@ -21,6 +21,7 @@ import gov.ornl.ssm.ml.ui.data.Filter;
 import gov.ornl.ssm.ml.ui.data.Model;
 import gov.ornl.ssm.ml.ui.data.PeakLocationRangeFeature;
 import gov.ornl.ssm.ml.ui.data.PeakRatioRangeFeature;
+import gov.ornl.ssm.ml.ui.data.PeaksRatioTwoRangeFeature;
 
 /**
  * Dialog for defining the Label and Features for a Filter.
@@ -130,7 +131,7 @@ public class LabelFeaturesDialog extends Dialog {
 		});
 
 		// Selector for what kind of feature to add
-		Select<String> featureSelect = new Select<String>(PeakLocationRangeFeature.getName(), PeakRatioRangeFeature.getName());
+		Select<String> featureSelect = new Select<String>(PeakLocationRangeFeature.getName(), PeakRatioRangeFeature.getName(), PeaksRatioTwoRangeFeature.getName());
 		featureSelect.setLabel("Select New Feature Type");
 
 		// Button to add a new feature
@@ -148,8 +149,13 @@ public class LabelFeaturesDialog extends Dialog {
 			} else if (PeakRatioRangeFeature.getName().equals(featureSelect.getValue())) {
 				features.add(new PeakRatioRangeFeature(filter, models, this));
 				featureBox.setItems(features);
-				filter.getFeatures().add(Arrays.asList("scidata", "dataseries", "SSM:XY:axis:PEAK-RAITO-RANGE-0-1",
+				filter.getFeatures().add(Arrays.asList("scidata", "dataseries", "SSM:XY:axis:PEAK-RATIO-RANGE-0-1",
 						"valuearray", "numberarray"));
+			} else if (PeaksRatioTwoRangeFeature.getName().equals(featureSelect.getValue())) {
+				features.add(new PeaksRatioTwoRangeFeature(filter, models, this));
+				featureBox.setItems(features);
+				filter.getFeatures().add(Arrays.asList("scidata", "dataseries", "SSM:XY:axis:PEAKS-RATIO-TWO-RANGES-0-1-2-3",
+						"valuearray", "numberarray"));				
 			}
 
 		});
@@ -220,8 +226,11 @@ public class LabelFeaturesDialog extends Dialog {
 					if(feature.contains(":PEAK-LOC-RANGE-")) {
 						features.add(new PeakLocationRangeFeature(filter, models, this));
 						break;
-					} else if (feature.contains(":PEAK-RAITO-RANGE-")) {
+					} else if (feature.contains(":PEAK-RATIO-RANGE-")) {
 						features.add(new PeakRatioRangeFeature(filter, models, this));
+						break;
+					} else if (feature.contains(":PEAKS-RATIO-TWO-RANGES")) {
+						features.add(new PeaksRatioTwoRangeFeature(filter, models, this));
 						break;
 					}
 				}
