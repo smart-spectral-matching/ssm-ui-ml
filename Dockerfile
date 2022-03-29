@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM code.ornl.gov:4567/rse/images/debian:buster-slim
 
 EXPOSE 8080
 
