@@ -13,6 +13,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -91,11 +92,17 @@ public class TrainingView extends VerticalLayout {
 			try {
 
 				// Get the model digest from the backend
-				URL url = new URL(config.getFusekiHost() + "/api/datasets/curies/models");
+				URL url = new URL(config.getFusekiHost() + "/api/datasets/curies/models?pageSize=220");
+				
+				int seen = 0;
+				int total = 1;
+				
+				while(seen < total) {
 				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 				conn.setRequestMethod("GET");
 				BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 				
+				jsonModels = "";
 				
 				// Read the results into the string
 				String line = reader.readLine();
@@ -105,19 +112,17 @@ public class TrainingView extends VerticalLayout {
 					line = reader.readLine();
 				}
 				
-			} catch (IOException e) {
-				e.printStackTrace();
-				add(new Label(e.getMessage()));
 
-				for (int i = 0; i < e.getStackTrace().length; i++) {
-					add(new Label(e.getStackTrace()[i].toString()));
-				}
-			}
-
-			try {
-
+				// Get the total number of models to download
+				JsonNode digest = mapper.readTree(jsonModels);
+				total = digest.get("total").asInt();
+				
+				
+				String next = digest.get("next").asText();
+				url = new URL(config.getFusekiHost() + next.substring(next.indexOf(".gov") + 4));
+				
 				// Strip out the pagination data, leaving only the raw models
-				String modelsString = mapper.writeValueAsString(mapper.readTree(jsonModels).get("data"));
+				String modelsString = mapper.writeValueAsString(digest.get("data"));
 
 				// Convert the model data back to JSON, then read the JSON into classes
 				List<Model> tempModels = mapper.readValue(modelsString,
@@ -125,6 +130,9 @@ public class TrainingView extends VerticalLayout {
 				
 				//Read each abbreviated model
 				for(Model temp : tempModels) {
+					
+					//Count the new model
+					seen += 1;
 					
 					String modelString = "";
 					
@@ -134,22 +142,25 @@ public class TrainingView extends VerticalLayout {
 					if(urlString.endsWith("/")) {
 						urlString = urlString.substring(0, urlString.lastIndexOf("/"));
 					}
-
+					
 					// Get the model digest from the backend
-					URL url = new URL(urlString);
-					HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-					conn.setRequestMethod("GET");
-					BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+					URL modelUrl = new URL(urlString);
+					HttpURLConnection modelConn = (HttpURLConnection) modelUrl.openConnection();
+					modelConn.setRequestMethod("GET");
+					reader = new BufferedReader(new InputStreamReader(modelConn.getInputStream()));
 
 					// Read the results into the string
-					String line = reader.readLine();
+					line = reader.readLine();
 
 					while (line != null) {
 						modelString += line;
 						line = reader.readLine();
 					}
 					
+				
 					models.add(mapper.readValue(modelString, Model.class));
+				}
+				
 				}
 
 			} catch (IOException e) {
@@ -221,8 +232,13 @@ public class TrainingView extends VerticalLayout {
 
 				// String to store the Python output
 				String output = "";
+				
+				add(new Label("python3 ssm.py train " +  modelList + " " + filterString + " " + classifier + " " + nameField.getValue()  + " " + 
+						config.getFusekiHost()  + " " +  descriptionField.getValue()));
 
 				try {
+					
+
 
 					// Launch the Python script
 					Process pythonProcess = Runtime.getRuntime().exec(new String[] {"python3", "ssm.py", "train", modelList, filterString, classifier, nameField.getValue(),

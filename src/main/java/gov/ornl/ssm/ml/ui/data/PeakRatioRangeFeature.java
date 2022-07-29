@@ -66,9 +66,9 @@ public class PeakRatioRangeFeature implements Feature {
 		endField.setValue(1d);
 		
 		//If the filter already has a definition for the filter, initialize the fields
-		for(String feature : filter.getFeatures().get(index)) {
-			if(feature.startsWith("SSM:XY:axis:PEAK-RATIO-RANGE-")) {
-				String[] tokens = feature.split("-");
+		for(Object feature : filter.getFeatures().get(index)) {
+			if(feature instanceof String && ((String) feature).startsWith("SSM:XY:axis:PEAK-RATIO-RANGE-")) {
+				String[] tokens = ((String) feature).split("-");
 				
 				startField.setValue(Double.valueOf(tokens[3]));
 				endField.setValue(Double.valueOf(tokens[4]));
@@ -94,11 +94,11 @@ public class PeakRatioRangeFeature implements Feature {
 				filter.getFeatures().set(index,
 						Arrays.asList("scidata", "dataseries",
 								"SSM:XY:axis:PEAK-RATIO-RANGE-" + startField.getValue() + "-" + endField.getValue(),
-								"parameter", "numericValueArray", "numberArray"));
+								"parameter", "numericValueArray", 0, "numberArray"));
 				
 				//Update all models' validity
 				for(Model model : models) {
-					List<Double> axis = model.getScidata().getDataseries().get(0).getxAxis().getParameter().getNumericValueArray().getNumberArray();
+					List<Double> axis = model.getScidata().getDataseries().get(0).getxAxis().getParameter().getNumericValueArray().get(0).getNumberArray();
 					
 					//If the feature range is at least partially covered by the data, it is valid
 					if(axis.get(0) > endField.getValue() || axis.get(axis.size() - 1) < startField.getValue()) {

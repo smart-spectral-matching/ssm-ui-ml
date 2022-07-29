@@ -13,21 +13,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class Filter {
 
-	private List<List<String>> features;
+	private List<List<Object>> features;
 
 	private List<String> label;
 
 	public Filter() {
-		setFeatures(new ArrayList<List<String>>());
+		setFeatures(new ArrayList<List<Object>>());
 		setLabel(new ArrayList<String>());
 	}
 
 	@JsonProperty("Features")
-	public List<List<String>> getFeatures() {
+	public List<List<Object>> getFeatures() {
 		return features;
 	}
 
-	public void setFeatures(List<List<String>> features) {
+	public void setFeatures(List<List<Object>> features) {
 		this.features = features;
 	}
 

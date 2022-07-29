@@ -1,5 +1,7 @@
 package gov.ornl.ssm.ml.ui.data;
 
+import java.util.ArrayList;
+
 /**
  * Object representation of a Parameter from the Model JSON.
  * 
@@ -12,12 +14,12 @@ public class Parameter {
 
 	private String quantity;
 
-	private ValueArray numericValueArray;
+	private ArrayList<ValueArray> numericValueArray;
 
 	public Parameter() {
 		property = null;
 		quantity = null;
-		numericValueArray = null;
+		numericValueArray = new ArrayList<ValueArray>();
 	}
 
 	public String getProperty() {
@@ -36,11 +38,11 @@ public class Parameter {
 		this.quantity = quantity;
 	}
 
-	public ValueArray getNumericValueArray() {
+	public ArrayList<ValueArray> getNumericValueArray() {
 		return numericValueArray;
 	}
 
-	public void setNumericValueArray(ValueArray valuearray) {
+	public void setNumericValueArray(ArrayList<ValueArray> valuearray) {
 		this.numericValueArray = valuearray;
 	}
 }

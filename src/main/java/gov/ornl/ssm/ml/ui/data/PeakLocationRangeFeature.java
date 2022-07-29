@@ -66,9 +66,9 @@ public class PeakLocationRangeFeature implements Feature {
 		endField.setValue(1d);
 		
 		//Initialize the input fields if the filter already has a definition
-		for(String feature : filter.getFeatures().get(index)) {
-			if(feature.startsWith("SSM:XY:axis:PEAK-LOC-RANGE-")) {
-				String[] tokens = feature.split("-");
+		for(Object feature : filter.getFeatures().get(index)) {
+			if(feature instanceof String && ((String) feature).startsWith("SSM:XY:axis:PEAK-LOC-RANGE-")) {
+				String[] tokens = ((String) feature).split("-");
 				
 				startField.setValue(Double.valueOf(tokens[3]));
 				endField.setValue(Double.valueOf(tokens[4]));
@@ -94,13 +94,13 @@ public class PeakLocationRangeFeature implements Feature {
 				filter.getFeatures().set(index,
 						Arrays.asList("scidata", "dataseries",
 								"SSM:XY:axis:PEAK-LOC-RANGE-" + startField.getValue() + "-" + endField.getValue(),
-								"parameter", "numericValueArray", "numberArray"));
+								"parameter", "numericValueArray", 0, "numberArray"));
 				
 				//Update all models' validity
 				for(Model model : models) {
 					
 					//Get the x axis
-					List<Double> axis = model.getScidata().getDataseries().get(0).getxAxis().getParameter().getNumericValueArray().getNumberArray();
+					List<Double> axis = model.getScidata().getDataseries().get(0).getxAxis().getParameter().getNumericValueArray().get(0).getNumberArray();
 					
 					//If the defined range is entirely outside the axis's range, this model is invalid.
 					if(axis.get(0) > endField.getValue() || axis.get(axis.size() - 1) < startField.getValue()) {

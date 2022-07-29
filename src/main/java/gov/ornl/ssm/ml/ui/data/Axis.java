@@ -10,24 +10,24 @@ import java.util.List;
  */
 public class Axis {
 
-	private String axisType;
+	private String hasAxisType;
 
 	private String label;
 
 	private Parameter parameter;
 
 	public Axis() {
-		axisType = null;
+		setHasAxisType(null);
 		label = null;
 		parameter = null;
 	}
 
-	public String getAxisType() {
-		return axisType;
+	public String getHasAxisType() {
+		return hasAxisType;
 	}
 
-	public void setAxisType(String axis) {
-		this.axisType = axis;
+	public void setHasAxisType(String hasAxisType) {
+		this.hasAxisType = hasAxisType;
 	}
 
 	public String getLabel() {

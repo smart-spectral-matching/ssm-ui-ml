@@ -1,5 +1,7 @@
 package gov.ornl.ssm.ml.ui.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Object representation of the Facet from the Model JSON.
  * 
@@ -10,17 +12,30 @@ public class Facet {
 
 	private String atoms;
 	
+	@JsonProperty("crystal system")
+	private String crystalSystem;
+	
 	private String formula;
 
 	private String materialType;
 
 	private String multiplicity;
+	
+	@JsonProperty("structure type")
+	private String structureType;
+	
+
+	@JsonProperty("uranium coordination chemistry")
+	private String uraniumCoordinationChemistry;
 
 	public Facet() {
-		atoms = "";
+		atoms = null;
+		crystalSystem = null;
 		formula = "";
 		materialType = "";
 		multiplicity = "";
+		structureType = null;
+		uraniumCoordinationChemistry = null;
 	}
 
 	public String getAtoms() {
@@ -54,5 +69,30 @@ public class Facet {
 	public void setMultiplicity(String multiplicity) {
 		this.multiplicity = multiplicity;
 	}
+
+	public String getStructureType() {
+		return structureType;
+	}
+
+	public void setStructureType(String structureType) {
+		this.structureType = structureType;
+	}
+
+	public String getUraniumCoordinationChemistry() {
+		return uraniumCoordinationChemistry;
+	}
+
+	public void setUraniumCoordinationChemistry(String uraniumCoordinationChemistry) {
+		this.uraniumCoordinationChemistry = uraniumCoordinationChemistry;
+	}
+
+	public String getCrystalSystem() {
+		return crystalSystem;
+	}
+
+	public void setCrystalSystem(String crystalSystem) {
+		this.crystalSystem = crystalSystem;
+	}
+
 
 }

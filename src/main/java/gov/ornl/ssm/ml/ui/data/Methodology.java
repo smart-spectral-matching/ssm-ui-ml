@@ -9,9 +9,12 @@ package gov.ornl.ssm.ml.ui.data;
 public class Methodology {
 
 	private String evaluationMethod;
+	
+	private MethodologyAspect hasMethodologyAspect;
 
 	public Methodology() {
-		evaluationMethod = null;
+		evaluationMethod = "";
+		hasMethodologyAspect = null;
 	}
 
 	public String getEvaluationMethod() {
@@ -21,4 +24,13 @@ public class Methodology {
 	public void setEvaluationMethod(String evalutationMethod) {
 		this.evaluationMethod = evalutationMethod;
 	}
+
+	public MethodologyAspect getHasMethodologyAspect() {
+		return hasMethodologyAspect;
+	}
+
+	public void setHasMethodologyAspect(MethodologyAspect hasMethodologyAspect) {
+		this.hasMethodologyAspect = hasMethodologyAspect;
+	}
+
 }

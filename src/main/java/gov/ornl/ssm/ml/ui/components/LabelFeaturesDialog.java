@@ -2,6 +2,7 @@ package gov.ornl.ssm.ml.ui.components;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import gov.ornl.ssm.ml.ui.data.Facet;
 import gov.ornl.ssm.ml.ui.data.Feature;
 import gov.ornl.ssm.ml.ui.data.Filter;
 import gov.ornl.ssm.ml.ui.data.Model;
+import gov.ornl.ssm.ml.ui.data.PeakFixedDistanceFeature;
 import gov.ornl.ssm.ml.ui.data.PeakLocationRangeFeature;
 import gov.ornl.ssm.ml.ui.data.PeakRatioRangeFeature;
 import gov.ornl.ssm.ml.ui.data.PeaksRatioTwoRangeFeature;
@@ -30,6 +32,16 @@ import gov.ornl.ssm.ml.ui.data.PeaksRatioTwoRangeFeature;
  *
  */
 public class LabelFeaturesDialog extends Dialog {
+
+	/**
+	 * List of all unique crystals named in any Face in any Model
+	 */
+	private HashSet<String> crystals = null;
+
+	/**
+	 * List of all uranium chemistry coordinations named in any Facet in any Model
+	 */
+	private HashSet<String> coordinations = null;
 
 	/**
 	 * Layout where feature editors will be drawn.
@@ -50,7 +62,7 @@ public class LabelFeaturesDialog extends Dialog {
 	 * The grid showing the models being used as training data.
 	 */
 	private Grid<Model> grid;
-	
+
 	/**
 	 * The models representing the data the filter will be trained on.
 	 */
@@ -65,6 +77,11 @@ public class LabelFeaturesDialog extends Dialog {
 	 * Layout where the label editor will be drawn.
 	 */
 	private VerticalLayout labelLayout;
+
+	/**
+	 * List of all unique structures named in any Facet in any Model
+	 */
+	private HashSet<String> structures = null;
 
 	/**
 	 * Default constructor.
@@ -87,41 +104,49 @@ public class LabelFeaturesDialog extends Dialog {
 		grid = new Grid<Model>(Model.class);
 		grid.setItems(models);
 		grid.setColumns("title", "label");
-		
-		//TODO Maybe display this condition as a color for the row instead of a column
-		//Add a column for whether this model needs to be thrown out for not having a feature 
-		grid.addColumn(new ValueProvider<Model, Boolean>(){
+
+		// TODO Maybe display this condition as a color for the row instead of a column
+		// Add a column for whether this model needs to be thrown out for not having a
+		// feature
+		grid.addColumn(new ValueProvider<Model, Boolean>() {
 
 			@Override
 			public Boolean apply(Model source) {
 				return source.getInvalidFeatures().size() == 0;
 			}
-			
+
 		}).setHeader("valid");
 
 		// Selector for which type of label to use
-		Select<String> labelSelect = new Select<String>("Functional Group Prescence");
+		Select<String> labelSelect = new Select<String>("Crystal System Type", "Functional Group Prescence",
+				"Structure Type", "Uranium Coordination Chemistry");
 		labelSelect.setLabel("Select Label Type");
 
 		// Draw the editor for the kind of label the user selects
 		labelSelect.addValueChangeListener(e -> {
 
-			if ("Functional Group Prescence".equals(e.getValue())) {
+			if ("Crystal System Type".equals(e.getValue())) {
+				drawCrystalSystemEditor();
+			} else if ("Functional Group Prescence".equals(e.getValue())) {
 				drawFunctinoalGroupPrescenceEditor();
+			} else if ("Structure Type".equals(e.getValue())) {
+				drawStructureTypeEditor();
+			} else if ("Uranium Coordination Chemistry".equals(e.getValue())) {
+				drawUraniumCoordinationChemistryEditor();
 			}
 		});
 
 		// List of all existing features
 		ListBox<Feature> featureBox = new ListBox<Feature>();
-		
-		//Display the feature number in the list
-		featureBox.setRenderer(new ComponentRenderer<Label,Feature>() {
-			
+
+		// Display the feature number in the list
+		featureBox.setRenderer(new ComponentRenderer<Label, Feature>() {
+
 			@Override
 			public Label createComponent(Feature item) {
-				
+
 				String display = "Feature " + features.indexOf(item) + " ";
-				if(item instanceof PeakLocationRangeFeature) {
+				if (item instanceof PeakLocationRangeFeature) {
 					display += PeakLocationRangeFeature.getName();
 				} else if (item instanceof PeakRatioRangeFeature) {
 					display += PeakRatioRangeFeature.getName();
@@ -131,7 +156,9 @@ public class LabelFeaturesDialog extends Dialog {
 		});
 
 		// Selector for what kind of feature to add
-		Select<String> featureSelect = new Select<String>(PeakLocationRangeFeature.getName(), PeakRatioRangeFeature.getName(), PeaksRatioTwoRangeFeature.getName());
+		Select<String> featureSelect = new Select<String>(PeakLocationRangeFeature.getName(),
+				PeakRatioRangeFeature.getName(), PeakFixedDistanceFeature.getName(),
+				PeaksRatioTwoRangeFeature.getName());
 		featureSelect.setLabel("Select New Feature Type");
 
 		// Button to add a new feature
@@ -145,17 +172,23 @@ public class LabelFeaturesDialog extends Dialog {
 				features.add(new PeakLocationRangeFeature(filter, models, this));
 				featureBox.setItems(features);
 				filter.getFeatures().add(Arrays.asList("scidata", "dataseries", "SSM:XY:axis:PEAK-LOC-RANGE-0-1",
-						"valuearray", "numberarray"));
+						"parameter", "numericValueArray", 0, "numberArray"));
 			} else if (PeakRatioRangeFeature.getName().equals(featureSelect.getValue())) {
 				features.add(new PeakRatioRangeFeature(filter, models, this));
 				featureBox.setItems(features);
 				filter.getFeatures().add(Arrays.asList("scidata", "dataseries", "SSM:XY:axis:PEAK-RATIO-RANGE-0-1",
-						"valuearray", "numberarray"));
+						"parameter", "numericValueArray", 0, "numberArray"));
 			} else if (PeaksRatioTwoRangeFeature.getName().equals(featureSelect.getValue())) {
 				features.add(new PeaksRatioTwoRangeFeature(filter, models, this));
 				featureBox.setItems(features);
-				filter.getFeatures().add(Arrays.asList("scidata", "dataseries", "SSM:XY:axis:PEAKS-RATIO-TWO-RANGES-0-1-2-3",
-						"valuearray", "numberarray"));				
+				filter.getFeatures()
+						.add(Arrays.asList("scidata", "dataseries", "SSM:XY:axis:PEAKS-RATIO-TWO-RANGES-0-1-2-3",
+								"parameter", "numericValueArray", 0, "numberArray"));
+			} else if (PeakFixedDistanceFeature.getName().equals(featureSelect.getValue())) {
+				features.add(new PeakFixedDistanceFeature(filter, models, this));
+				featureBox.setItems(features);
+				filter.getFeatures().add(Arrays.asList("scidata", "dataseries",
+						"SSM:XY:axis:PEAKS-DISTANCE-0-10-2-1-2-2", "parameter", "numericValueArray", 0, "numberArray"));
 			}
 
 		});
@@ -204,41 +237,116 @@ public class LabelFeaturesDialog extends Dialog {
 		add(addFeatureButton);
 		add(removeFeatureButton);
 		add(featureLayout);
-		
-		//If a label already exists, draw its editor
-		if(filter.getLabel().size() > 0) {
-			for(String label : filter.getLabel()) {
-				
-				//"PRESENT" means seearching for a molecule
-				if(label.contains(":PRESENT")) {
+
+		// If a label already exists, draw its editor
+		if (filter.getLabel().size() > 0) {
+			for (String label : filter.getLabel()) {
+
+				// "PRESENT" means seearching for a molecule
+				if (label.contains(":PRESENT")) {
 					drawFunctinoalGroupPrescenceEditor();
 					break;
 				}
 			}
 		}
-		
-		//If the filter already has any filters, add them to the UI
-		if(filter.getFeatures().size() > 0) {
-			for(List<String> featureList : filter.getFeatures()) {
-				for(String feature : featureList) {
-					
-					//Add the correct type of feature for the SSM command in the filter definition.
-					if(feature.contains(":PEAK-LOC-RANGE-")) {
-						features.add(new PeakLocationRangeFeature(filter, models, this));
-						break;
-					} else if (feature.contains(":PEAK-RATIO-RANGE-")) {
-						features.add(new PeakRatioRangeFeature(filter, models, this));
-						break;
-					} else if (feature.contains(":PEAKS-RATIO-TWO-RANGES")) {
-						features.add(new PeaksRatioTwoRangeFeature(filter, models, this));
-						break;
+
+		// If the filter already has any filters, add them to the UI
+		if (filter.getFeatures().size() > 0) {
+			for (List<Object> featureList : filter.getFeatures()) {
+				for (Object featureObj : featureList) {
+
+					if (featureObj instanceof String) {
+
+						String feature = (String) featureObj;
+
+						// Add the correct type of feature for the SSM command in the filter definition.
+						if (feature.contains(":PEAK-LOC-RANGE-")) {
+							features.add(new PeakLocationRangeFeature(filter, models, this));
+							break;
+						} else if (feature.contains(":PEAK-RATIO-RANGE-")) {
+							features.add(new PeakRatioRangeFeature(filter, models, this));
+							break;
+						} else if (feature.contains(":PEAKS-RATIO-TWO-RANGES")) {
+							features.add(new PeaksRatioTwoRangeFeature(filter, models, this));
+							break;
+						}
+
 					}
 				}
 			}
 		}
-		
-		//Update the feature box with the pre-existing features
+
+		// Update the feature box with the pre-existing features
 		featureBox.setItems(features);
+	}
+
+	/**
+	 * Draw an editor for a Crystal System type filter
+	 */
+	private void drawCrystalSystemEditor() {
+
+		// If the lists hvensn't been created, search for all unique molecules
+		if (crystals == null) {
+			crystals = new HashSet<String>();
+
+			for (Model model : models) {
+				for (Facet facet : model.getScidata().getSystem().getFacets()) {
+					if (facet.getCrystalSystem() != null) {
+						crystals.add(facet.getCrystalSystem());
+					}
+				}
+			}
+		}
+
+		// A selector for which molecule to build the label on
+		Select<String> moleculeSelect = new Select<String>();
+		moleculeSelect.setLabel("Crystal System type to detect");
+		moleculeSelect.setItems(crystals);
+
+		// If the filter is already initialized, show t
+		if (filter.getLabel().size() > 0) {
+			for (String label : filter.getLabel()) {
+				if (label.contains("SSM:PRESENT:crystal system:")) {
+					moleculeSelect.setValue(label.substring(27));
+				}
+			}
+		}
+
+		moleculeSelect.addValueChangeListener(e -> {
+
+			// Set the molecule to the filter definition
+			filter.setLabel(Arrays.asList("scidata", "system", "facets", "SSM:PRESENT:crystal system:" + e.getValue()));
+
+			// Search each mode for the selected molecule, applying labels for
+			// prescence/abscence in the GUI
+			for (Model model : models) {
+				boolean found = false;
+				String value = "";
+
+				for (Facet facet : model.getScidata().getSystem().getFacets()) {
+					if (facet.getCrystalSystem() != null) {
+						found = true;
+						value = facet.getCrystalSystem();
+						break;
+					}
+				}
+
+				if (found) {
+					model.setLabel(value);
+				} else {
+					model.setLabel("None");
+				}
+
+				// Update the GUI
+				grid.setItems(models);
+
+			}
+		});
+
+		// Layout
+		labelLayout.removeAll();
+		labelLayout.add(moleculeSelect);
+
 	}
 
 	/**
@@ -246,7 +354,7 @@ public class LabelFeaturesDialog extends Dialog {
 	 */
 	private void drawFunctinoalGroupPrescenceEditor() {
 
-		// If the molecule list hasn't been created, search for all unique molecules
+		// If the lists hvensn't been created, search for all unique molecules
 		if (molecules == null) {
 			molecules = new HashSet<String>();
 
@@ -263,11 +371,11 @@ public class LabelFeaturesDialog extends Dialog {
 		Select<String> moleculeSelect = new Select<String>();
 		moleculeSelect.setLabel("Functional group to detect");
 		moleculeSelect.setItems(molecules);
-		
-		//If the filter is already initialized, show t
-		if(filter.getLabel().size() > 0) {
-			for(String label : filter.getLabel()) {
-				if(label.contains("SSM:PRESENT:atoms:")) {
+
+		// If the filter is already initialized, show t
+		if (filter.getLabel().size() > 0) {
+			for (String label : filter.getLabel()) {
+				if (label.contains("SSM:PRESENT:atoms:")) {
 					moleculeSelect.setValue(label.substring(18));
 				}
 			}
@@ -295,10 +403,10 @@ public class LabelFeaturesDialog extends Dialog {
 				} else {
 					model.setLabel(e.getValue() + " absent");
 				}
-				
-				//Update the GUI
+
+				// Update the GUI
 				grid.setItems(models);
-				
+
 			}
 		});
 
@@ -307,7 +415,139 @@ public class LabelFeaturesDialog extends Dialog {
 		labelLayout.add(moleculeSelect);
 
 	}
-	
+
+	/**
+	 * Draw an editor for a Structure type filter
+	 */
+	private void drawStructureTypeEditor() {
+
+		// If the lists hvensn't been created, search for all unique molecules
+		if (structures == null) {
+			structures = new HashSet<String>();
+
+			for (Model model : models) {
+				for (Facet facet : model.getScidata().getSystem().getFacets()) {
+					if (facet.getStructureType() != null) {
+						structures.add(facet.getStructureType());
+					}
+				}
+			}
+		}
+
+		// A selector for which molecule to build the label on
+		Select<String> moleculeSelect = new Select<String>();
+		moleculeSelect.setLabel("Structure type to detect");
+		moleculeSelect.setItems(structures);
+
+		// If the filter is already initialized, show t
+		if (filter.getLabel().size() > 0) {
+			for (String label : filter.getLabel()) {
+				if (label.contains("SSM:PRESENT:structure type:")) {
+					moleculeSelect.setValue(label.substring(27));
+				}
+			}
+		}
+
+		moleculeSelect.addValueChangeListener(e -> {
+
+			// Set the molecule to the filter definition
+			filter.setLabel(Arrays.asList("scidata", "system", "facets", "SSM:PRESENT:structure type:" + e.getValue()));
+
+			// Search each mode for the selected molecule, applying labels for
+			// prescence/abscence in the GUI
+			for (Model model : models) {
+				boolean found = false;
+				String value = "";
+
+				for (Facet facet : model.getScidata().getSystem().getFacets()) {
+					if (facet.getStructureType() != null) {
+						found = true;
+						value = facet.getStructureType();
+						break;
+					}
+				}
+
+				if (found) {
+					model.setLabel(value);
+				} else {
+					model.setLabel("None");
+				}
+
+				// Update the GUI
+				grid.setItems(models);
+
+			}
+		});
+
+		// Layout
+		labelLayout.removeAll();
+		labelLayout.add(moleculeSelect);
+
+	}
+
+	/**
+	 * Draw an editor for a Uranium Coordination Chemistry type filter
+	 */
+	private void drawUraniumCoordinationChemistryEditor() {
+
+		// If the lists hvensn't been created, search for all unique molecules
+		if (coordinations == null) {
+			coordinations = new HashSet<String>();
+
+			for (Model model : models) {
+				for (Facet facet : model.getScidata().getSystem().getFacets()) {
+					if (facet.getUraniumCoordinationChemistry() != null) {
+						coordinations.add(facet.getUraniumCoordinationChemistry());
+					}
+				}
+			}
+		}
+
+		// A selector for which molecule to build the label on
+		Select<String> moleculeSelect = new Select<String>();
+		moleculeSelect.setLabel("Uranium coordination chemistry to detect");
+		moleculeSelect.setItems(coordinations);
+
+		// If the filter is already initialized, show t
+		if (filter.getLabel().size() > 0) {
+			for (String label : filter.getLabel()) {
+				if (label.contains("SSM:PRESENT:uranium coordination chemistry:")) {
+					moleculeSelect.setValue(label.substring(43));
+				}
+			}
+		}
+
+		moleculeSelect.addValueChangeListener(e -> {
+
+			// Set the molecule to the filter definition
+			filter.setLabel(Arrays.asList("scidata", "system", "facets",
+					"SSM:PRESENT:uranium coordination chemistry:" + e.getValue()));
+
+			// Search each mode for the selected molecule, applying labels for
+			// prescence/abscence in the GUI
+			for (Model model : models) {
+				String value = "None";
+
+				for (Facet facet : model.getScidata().getSystem().getFacets()) {
+					if (facet.getUraniumCoordinationChemistry() != null) {
+						value = facet.getUraniumCoordinationChemistry();
+					}
+				}
+
+				model.setLabel(value);
+
+				// Update the GUI
+				grid.setItems(models);
+
+			}
+		});
+
+		// Layout
+		labelLayout.removeAll();
+		labelLayout.add(moleculeSelect);
+
+	}
+
 	public void refreshGrid() {
 		grid.setItems(models);
 	}
