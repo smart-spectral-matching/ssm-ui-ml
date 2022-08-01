@@ -232,9 +232,6 @@ public class TrainingView extends VerticalLayout {
 
 				// String to store the Python output
 				String output = "";
-				
-				add(new Label("python3 ssm.py train " +  modelList + " " + filterString + " " + classifier + " " + nameField.getValue()  + " " + 
-						config.getFusekiHost()  + " " +  descriptionField.getValue()));
 
 				try {
 					

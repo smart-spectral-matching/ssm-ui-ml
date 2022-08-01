@@ -83,8 +83,8 @@ public class ClassificationView extends VerticalLayout {
 		//Download all model names from the database
 		ArrayList<String> names = new ArrayList<String>();
 		try {
-			Connection conn = DriverManager.getConnection("jdbc:postgresql://" + config.getDatabaseHost() + ":5432/ssm",
-			        "postgres", "postgres");
+			Connection conn = DriverManager.getConnection("jdbc:postgresql://" + config.getDatabaseHost() + ":" + config.getDatabasePort() + "/" + config.getDatabaseName(),
+			        config.getDatabaseUser(), config.getDatabasePassword());
 			
 			ResultSet results = conn.createStatement().executeQuery("SELECT name FROM models");
 			

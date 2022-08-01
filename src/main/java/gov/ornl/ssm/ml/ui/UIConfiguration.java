@@ -20,11 +20,39 @@ public class UIConfiguration {
 	@Value("${database.host}")
 	private String databaseHost;
 	
+	@Value("${database.port}")
+	private String databasePort;
+	
+	@Value("${database.name}")
+	private String databaseName;
+	
+	@Value("${database.user}")
+	private String databaseUser;
+	
+	@Value("${database.password}")
+	private String databasePassword;
+	
 	@Value("${fuseki.host}")
 	private String fusekiHost;
 	
 	public String getDatabaseHost() {
 		return databaseHost;
+	}
+	
+	public String getDatabasePort() {
+		return databasePort;
+	}
+	
+	public String getDatabaseName() {
+		return databaseName;
+	}
+	
+	public String getDatabaseUser() {
+		return databaseUser;
+	}
+	
+	public String getDatabasePassword() {
+		return databasePassword;
 	}
 
 	public String getFusekiHost() {
