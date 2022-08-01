@@ -196,7 +196,6 @@ public class ClassificationView extends VerticalLayout {
 				ProcessBuilder builder = new ProcessBuilder("python3", "ssm.py", "predict", classifierSelect.getValue(), userJson);
 				Process pythonProcess = builder.start();
 				
-				add(new Label("python3 " + "ssm.py " + "predict " + classifierSelect.getValue() + " " + userJson));
 				while(pythonProcess.isAlive()) {
 					
 				}
