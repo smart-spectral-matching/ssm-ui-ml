@@ -3,6 +3,13 @@ package gov.ornl.ssm.ml.ui.views;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
@@ -24,10 +31,21 @@ public class MainScreen extends VerticalLayout {
 		//Links to each capability
 		RouterLink trainingLink = new RouterLink("Train a New Filter", TrainingView.class);
 		RouterLink classifyLink = new RouterLink("Classify a Sample", ClassificationView.class);
+		Anchor logout = new Anchor("logout", "Logout");
 		
 		//Layout
 		add(trainingLink);
 		add(classifyLink);
+		add(logout);
+		
+		//Demonstration of how to access OIDC info
+//		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//		if (authentication.getPrincipal() instanceof OidcUser) {
+//		    OidcUser principal = ((OidcUser) authentication.getPrincipal());
+//		    add(new Label(principal.getGivenName()));
+//		}
+//		add(new Label(authentication.getPrincipal().toString()));
+//		add(new Label(authentication.getPrincipal().getClass().getCanonicalName()));
 
 	}
 	
