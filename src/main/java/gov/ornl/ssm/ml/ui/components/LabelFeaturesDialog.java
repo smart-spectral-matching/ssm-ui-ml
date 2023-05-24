@@ -1,5 +1,8 @@
 package gov.ornl.ssm.ml.ui.components;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,6 +19,7 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.ValueProvider;
 
+import gov.ornl.ssm.ml.ui.UIConfiguration;
 import gov.ornl.ssm.ml.ui.data.Facet;
 import gov.ornl.ssm.ml.ui.data.Feature;
 import gov.ornl.ssm.ml.ui.data.Filter;
@@ -91,7 +95,7 @@ public class LabelFeaturesDialog extends Dialog {
 	 * @param filter
 	 *            The filter definition to be edited
 	 */
-	public LabelFeaturesDialog(List<Model> models, Filter filter) {
+	public LabelFeaturesDialog(List<Model> models, Filter filter, String name, String description, UIConfiguration config) {
 
 		// Initialize data members
 		features = new ArrayList<Feature>();
@@ -227,6 +231,74 @@ public class LabelFeaturesDialog extends Dialog {
 				featureBox.setItems(features);
 			}
 		});
+		
+		Label outputLabel = new Label();
+		
+		Button autoButton = new Button("Auto Train");
+		autoButton.addClickListener(e -> {
+			
+			// String to store the Python output
+			String output = "";
+
+			try {
+				
+				// Create the comma separated list of model uuids
+				String modelList = "";
+
+				for (Model m : models) {
+					modelList += m.getUuid() + ",";
+				}
+
+				modelList = modelList.substring(0, modelList.length() - 1);
+
+
+				// Launch the Python script
+				Process pythonProcess = Runtime.getRuntime().exec(new String[] {"python3", "ssm.py", "auto", modelList, name,
+						config.getFusekiHost(), description});
+				pythonProcess.waitFor();
+				
+				// Read the output
+				BufferedReader reader = new BufferedReader(
+						new InputStreamReader(pythonProcess.getInputStream()));
+
+				// The current line of output
+				String line = reader.readLine();
+
+				while (line != null) {
+
+					// Get the next line
+					output += line;
+					line = reader.readLine();
+				}
+
+				reader.close();
+
+				// Now read standard error as well
+				reader = new BufferedReader(new InputStreamReader(pythonProcess.getErrorStream()));
+
+				line = reader.readLine();
+
+				while (line != null) {
+
+					// Get the next line
+					output += line;
+					line = reader.readLine();
+				}
+
+				reader.close();
+
+			} catch (IOException | InterruptedException e1) {
+				e1.printStackTrace();
+				add(new Label(e1.getMessage()));
+
+				for (int i = 0; i < e1.getStackTrace().length; i++) {
+					add(new Label(e1.getStackTrace()[i].toString()));
+				}
+			}
+
+			// Display the output text
+			outputLabel.setText(output);
+		});
 
 		// Layout
 		add(grid);
@@ -237,6 +309,8 @@ public class LabelFeaturesDialog extends Dialog {
 		add(addFeatureButton);
 		add(removeFeatureButton);
 		add(featureLayout);
+		add(autoButton);
+		add(outputLabel);
 
 		// If a label already exists, draw its editor
 		if (filter.getLabel().size() > 0) {

@@ -14,12 +14,12 @@ public class Parameter {
 
 	private String quantity;
 
-	private ArrayList<ValueArray> numericValueArray;
+	private ValueArray numericValueArray;
 
 	public Parameter() {
 		property = null;
 		quantity = null;
-		numericValueArray = new ArrayList<ValueArray>();
+		numericValueArray = new ValueArray();
 	}
 
 	public String getProperty() {
@@ -38,11 +38,11 @@ public class Parameter {
 		this.quantity = quantity;
 	}
 
-	public ArrayList<ValueArray> getNumericValueArray() {
+	public ValueArray getNumericValueArray() {
 		return numericValueArray;
 	}
 
-	public void setNumericValueArray(ArrayList<ValueArray> valuearray) {
+	public void setNumericValueArray(ValueArray valuearray) {
 		this.numericValueArray = valuearray;
 	}
 }

@@ -26,13 +26,16 @@ public class OIDCLoginSecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 	    
+		// Return to homepage on logout
 		OidcClientInitiatedLogoutSuccessHandler handler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
 		handler.setPostLogoutRedirectUri("http://localhost:8080/machine-learning/");
 		
+		// Permit only oauth authorized requests
 		http.authorizeRequests(authorizeRequests -> authorizeRequests
 	    	.anyRequest().authenticated())
 	    	.oauth2Login(e -> e.permitAll())
 	    	.logout(e -> e.logoutSuccessHandler(handler));
+		http.csrf().disable();
 	    return http.build();
 	}
 

@@ -5,22 +5,31 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 
 import gov.ornl.ssm.ml.ui.UIConfiguration;
@@ -52,6 +61,12 @@ public class TrainingView extends VerticalLayout {
 	 * List of all models from CURIES.
 	 */
 	private List<Model> models;
+	
+    /**
+     * Oauth authentication service.
+    */
+    @Autowired(required = false)
+    private OAuth2AuthorizedClientService authorizedClientService;
 
 	/**
 	 * The default constructor
@@ -85,6 +100,15 @@ public class TrainingView extends VerticalLayout {
 
 		// Json representation of the models
 		String jsonModels = "";
+		
+        // Get the current user
+        Authentication authentication = SecurityContextHolder.getContext()
+                .getAuthentication();
+		
+        // The user information
+        OidcUser user = (OidcUser) authentication.getPrincipal();
+        OAuth2AuthorizedClient client =
+                authorizedClientService.loadAuthorizedClient("keycloak", user.getName());
 
 		// List of all models from the CURIES database
 		models = new ArrayList<Model>();
@@ -92,75 +116,86 @@ public class TrainingView extends VerticalLayout {
 			try {
 
 				// Get the model digest from the backend
-				URL url = new URL(config.getFusekiHost() + "/api/datasets/curies/models?pageSize=220");
+				URL url = new URL(config.getFusekiHost() + "/api/datasets/test/models?pageSize=220");
 				
+				// How many consumed/total models are in the database
 				int seen = 0;
 				int total = 1;
-				
+	            
+				// Continue fetching until all models have been returned
 				while(seen < total) {
-				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-				conn.setRequestMethod("GET");
-				BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-				
-				jsonModels = "";
-				
-				// Read the results into the string
-				String line = reader.readLine();
-
-				while (line != null) {
-					jsonModels += line;
-					line = reader.readLine();
-				}
-				
-
-				// Get the total number of models to download
-				JsonNode digest = mapper.readTree(jsonModels);
-				total = digest.get("total").asInt();
-				
-				
-				String next = digest.get("next").asText();
-				url = new URL(config.getFusekiHost() + next.substring(next.indexOf(".gov") + 4));
-				
-				// Strip out the pagination data, leaving only the raw models
-				String modelsString = mapper.writeValueAsString(digest.get("data"));
-
-				// Convert the model data back to JSON, then read the JSON into classes
-				List<Model> tempModels = mapper.readValue(modelsString,
-						mapper.getTypeFactory().constructCollectionType(List.class, Model.class));
-				
-				//Read each abbreviated model
-				for(Model temp : tempModels) {
 					
-					//Count the new model
-					seen += 1;
+					// If the token is expired, force a spring-boot token refresh by refreshing the entire page.
+		            if(client.getAccessToken().getExpiresAt().isBefore(Instant.now())) {
+		            	SecurityContextHolder.getContext().setAuthentication(null);
+		            	UI.getCurrent().navigate("training");
+		            }
 					
-					String modelString = "";
+					HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+					conn.setRequestProperty("Authorization", "Bearer " + client.getAccessToken().getTokenValue());
+					conn.setRequestMethod("GET");
+					BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 					
-					//Change the urls to point to the fuseki host
-					String urlString = temp.getUrl();
-					urlString = config.getFusekiHost() + urlString.substring(urlString.indexOf(".gov") + 4);
-					if(urlString.endsWith("/")) {
-						urlString = urlString.substring(0, urlString.lastIndexOf("/"));
-					}
+					jsonModels = "";
 					
-					// Get the model digest from the backend
-					URL modelUrl = new URL(urlString);
-					HttpURLConnection modelConn = (HttpURLConnection) modelUrl.openConnection();
-					modelConn.setRequestMethod("GET");
-					reader = new BufferedReader(new InputStreamReader(modelConn.getInputStream()));
-
 					// Read the results into the string
-					line = reader.readLine();
-
+					String line = reader.readLine();
+	
 					while (line != null) {
-						modelString += line;
+						jsonModels += line;
 						line = reader.readLine();
 					}
 					
-				
-					models.add(mapper.readValue(modelString, Model.class));
-				}
-				
+	
+					// Get the total number of models to download
+					JsonNode digest = mapper.readTree(jsonModels);
+					total = digest.get("total").asInt();
+					
+					// Get the first result page's url
+					String next = digest.get("next").asText();
+					url = new URL(next);
+					
+					// Strip out the pagination data, leaving only the raw models
+					String modelsString = mapper.writeValueAsString(digest.get("data"));
+	
+					// Convert the model data back to JSON, then read the JSON into classes
+					List<Model> tempModels = mapper.readValue(modelsString,
+							mapper.getTypeFactory().constructCollectionType(List.class, Model.class));
+					
+					//Read each abbreviated model
+					for(Model temp : tempModels) {
+						
+						//Count the new model
+						seen += 1;
+						
+						String modelString = "";
+						
+						//Change the urls to point to the fuseki host
+						String urlString = temp.getUrl();
+						if(urlString.contains(".gov")) {
+							urlString = config.getFusekiHost() + urlString.substring(urlString.indexOf(".gov") + 4);
+						}
+						if(urlString.endsWith("/")) {
+							urlString = urlString.substring(0, urlString.lastIndexOf("/"));
+						}
+						
+						// Get the model digest from the backend
+						URL modelUrl = new URL(urlString);
+						HttpURLConnection modelConn = (HttpURLConnection) modelUrl.openConnection();
+						modelConn.setRequestMethod("GET");
+						modelConn.setRequestProperty("Authorization", "Bearer " + client.getAccessToken().getTokenValue());
+						reader = new BufferedReader(new InputStreamReader(modelConn.getInputStream()));
+	
+						// Read the results into the string
+						line = reader.readLine();
+	
+						while (line != null) {
+							modelString += line;
+							line = reader.readLine();
+						}
+						
+						models.add(mapper.readValue(modelString, Model.class));
+					}
 				}
 
 			} catch (IOException e) {
@@ -172,7 +207,7 @@ public class TrainingView extends VerticalLayout {
 				}
 
 			}
-
+			
 			// A grid to display all models
 			Grid<Model> grid = new Grid<Model>(Model.class);
 			grid.setItems(models);
@@ -182,7 +217,7 @@ public class TrainingView extends VerticalLayout {
 			Button labelFeaturesButton = new Button("Set Label and Features");
 
 			labelFeaturesButton.addClickListener(e -> {
-				new LabelFeaturesDialog(models, filter).open();
+				new LabelFeaturesDialog(models, filter, "Default name", "Default description", config).open();
 			});
 
 			// Selection box for the type of machine learning
@@ -239,7 +274,7 @@ public class TrainingView extends VerticalLayout {
 
 					// Launch the Python script
 					Process pythonProcess = Runtime.getRuntime().exec(new String[] {"python3", "ssm.py", "train", modelList, filterString, classifier, nameField.getValue(),
-							config.getFusekiHost(), descriptionField.getValue()});
+							config.getFusekiHost(), descriptionField.getValue(), client.getAccessToken().getTokenValue()});
 					pythonProcess.waitFor();
 					
 					// Read the output
@@ -303,5 +338,4 @@ public class TrainingView extends VerticalLayout {
 			}
 		}
 	}
-
 }
