@@ -37,15 +37,6 @@ public class MainScreen extends VerticalLayout {
 		add(trainingLink);
 		add(classifyLink);
 		add(logout);
-		
-		//Demonstration of how to access OIDC info
-//		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//		if (authentication.getPrincipal() instanceof OidcUser) {
-//		    OidcUser principal = ((OidcUser) authentication.getPrincipal());
-//		    add(new Label(principal.getGivenName()));
-//		}
-//		add(new Label(authentication.getPrincipal().toString()));
-//		add(new Label(authentication.getPrincipal().getClass().getCanonicalName()));
 
 	}
 	
