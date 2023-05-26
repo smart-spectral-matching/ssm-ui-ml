@@ -1,8 +1,12 @@
 package gov.ornl.ssm.ml.ui.data;
 
-public class MethodologyAspect {
+import java.util.ArrayList;
 
-	private Setting hasSetting;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+// FIXME JSON schema should require hasSetting is always a list, instead of being an object when only one exists.
+@JsonIgnoreProperties({"hasSetting"})
+public class MethodologyAspect {
 	
 	private String instrument;
 	
@@ -13,19 +17,10 @@ public class MethodologyAspect {
 	private String techniqueType;
 	
 	public MethodologyAspect() {
-		hasSetting = null;
 		instrument = "";
 		instrumentType = "";
 		technique = "";
 		techniqueType = "";
-	}
-	
-	public Setting getHasSetting() {
-		return hasSetting;
-	}
-
-	public void setHasSetting(Setting hasSetting) {
-		this.hasSetting = hasSetting;
 	}
 
 	public String getInstrument() {

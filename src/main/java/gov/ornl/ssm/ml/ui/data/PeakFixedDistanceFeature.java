@@ -118,7 +118,7 @@ public class PeakFixedDistanceFeature implements Feature {
 				// Update all models' validity
 				for (Model model : models) {
 					List<Double> axis = model.getScidata().getDataseries().get(0).getxAxis().getParameter()
-							.getNumericValueArray().get(0).getNumberArray();
+							.getNumericValueArray().getNumberArray();
 
 					// If the feature range is at least partially covered by the data, it is valid
 					if (axis.get(0) > endField.getValue() || axis.get(axis.size() - 1) < startField.getValue()) {

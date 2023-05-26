@@ -40,7 +40,9 @@ if sys.argv[1] == "train":
     
     # Get each dataset and label axes appropriately
     for uuid in dataset_uuids:
-        dataset_url = urllib.request.urlopen(sys.argv[6] + "/api/datasets/" + global_uuid + "/models/" + uuid, timeout=30)
+        req = urllib.request.Request(sys.argv[6] + "/api/datasets/" + global_uuid + "/models/" + uuid)
+        req.add_header('Authorization', 'Bearer ' + sys.argv[8])
+        dataset_url = urllib.request.urlopen(req, timeout=30)
         dataset = json.loads(dataset_url.read().decode())
         datasets.append(dataset)
     
