@@ -122,7 +122,8 @@ public class LabelFeaturesDialog extends Dialog {
 		}).setHeader("valid");
 
 		// Selector for which type of label to use
-		Select<String> labelSelect = new Select<String>("Crystal System Type", "Functional Group Prescence",
+		Select<String> labelSelect = new Select<String>();
+		labelSelect.setItems("Crystal System Type", "Functional Group Prescence",
 				"Structure Type", "Uranium Coordination Chemistry");
 		labelSelect.setLabel("Select Label Type");
 
@@ -143,24 +144,19 @@ public class LabelFeaturesDialog extends Dialog {
 		// List of all existing features
 		ListBox<Feature> featureBox = new ListBox<Feature>();
 
-		// Display the feature number in the list
-		featureBox.setRenderer(new ComponentRenderer<Label, Feature>() {
-
-			@Override
-			public Label createComponent(Feature item) {
-
-				String display = "Feature " + features.indexOf(item) + " ";
-				if (item instanceof PeakLocationRangeFeature) {
-					display += PeakLocationRangeFeature.getName();
-				} else if (item instanceof PeakRatioRangeFeature) {
-					display += PeakRatioRangeFeature.getName();
-				}
-				return new Label(display);
+		featureBox.setRenderer(new ComponentRenderer<Label, Feature>(item -> {
+			String display = "Feature " + features.indexOf(item) + " ";
+			if (item instanceof PeakLocationRangeFeature) {
+				display += PeakLocationRangeFeature.getName();
+			} else if (item instanceof PeakRatioRangeFeature) {
+				display += PeakRatioRangeFeature.getName();
 			}
-		});
+			return new Label(display);
+		}));
 
 		// Selector for what kind of feature to add
-		Select<String> featureSelect = new Select<String>(PeakLocationRangeFeature.getName(),
+		Select<String> featureSelect = new Select<String>();
+		featureSelect.setItems(PeakLocationRangeFeature.getName(),
 				PeakRatioRangeFeature.getName(), PeakFixedDistanceFeature.getName(),
 				PeaksRatioTwoRangeFeature.getName());
 		featureSelect.setLabel("Select New Feature Type");
