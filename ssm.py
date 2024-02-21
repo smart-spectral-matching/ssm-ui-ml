@@ -17,11 +17,11 @@ A script to perform machine learning workflows.
 
 usage:
 
-ssm.py train (comma separated list of dataset UUIDs to use in training) (json representation of the filter) (name to save the model under) (identifier string for type of classifier to train) (url for the database to read from) (human readable description of the filter)
+ssm.py train (comma separated list of collection UUIDs to use in training) (json representation of the filter) (name to save the model under) (identifier string for type of classifier to train) (url for the database to read from) (human readable description of the filter)
 
 or
 
-ssm.py predict (name of model to predict with) (json description of the dataset whose class will be predicted) 
+ssm.py predict (name of model to predict with) (json description of the collection whose class will be predicted) 
 
 '''
 
@@ -30,30 +30,30 @@ ssm.py predict (name of model to predict with) (json description of the dataset 
 if sys.argv[1] == "train":
  
     # Get the list of all models
-    dataset_uuids = sys.argv[2].split(',')
+    collection_uuids = sys.argv[2].split(',')
     
     fuseki_url = sys.argv[6]
     global_uuid = "curies"
 
-    # All the datasets from the database
-    datasets = []
+    # All the collections from the database
+    collections = []
     
-    # Get each dataset and label axes appropriately
-    for uuid in dataset_uuids:
-        req = urllib.request.Request(sys.argv[6] + "/api/datasets/" + global_uuid + "/models/" + uuid)
+    # Get each collection and label axes appropriately
+    for uuid in collection_uuids:
+        req = urllib.request.Request(sys.argv[6] + "/api/collections/" + global_uuid + "/models/" + uuid)
         req.add_header('Authorization', 'Bearer ' + sys.argv[8])
-        dataset_url = urllib.request.urlopen(req, timeout=30)
-        dataset = json.loads(dataset_url.read().decode())
-        datasets.append(dataset)
+        collection_url = urllib.request.urlopen(req, timeout=30)
+        collection = json.loads(collection_url.read().decode())
+        collections.append(collection)
     
     filter = ssmml.construct_filters(json.loads(sys.argv[3]))[0]
     
         
-    # Get the labels for each dataset
-    labels = filter.getLabels(datasets)
+    # Get the labels for each collection
+    labels = filter.getLabels(collections)
     
-    # Get the Features for each dataset, normalized in the range 0-1
-    features = filter.getFeatures(datasets)
+    # Get the Features for each collection, normalized in the range 0-1
+    features = filter.getFeatures(collections)
     
     # List of extrema values for each feature
     extrema = []
@@ -76,7 +76,7 @@ if sys.argv[1] == "train":
     classifier = ssmml.train(labels, features, sys.argv[4])    
     ssmml.save_model(classifier,
                      sys.argv[5],
-                     dataset_uuids,
+                     collection_uuids,
                      sys.argv[3],
                      extrema,
                      classifier.classes_,
