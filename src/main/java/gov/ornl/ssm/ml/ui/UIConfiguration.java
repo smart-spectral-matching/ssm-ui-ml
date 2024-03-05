@@ -32,8 +32,8 @@ public class UIConfiguration {
 	@Value("${database.password}")
 	private String databasePassword;
 	
-	@Value("${dataset.name}")
-	private String datasetName;
+	@Value("${collection.name}")
+	private String collectionName;
 	
 	@Value("${fuseki.host}")
 	private String fusekiHost;
@@ -58,8 +58,8 @@ public class UIConfiguration {
 		return databasePassword;
 	}
 
-	public String getDatasetName() {
-		return datasetName;
+	public String getCollectionName() {
+		return collectionName;
 	}
 	
 	public String getFusekiHost() {

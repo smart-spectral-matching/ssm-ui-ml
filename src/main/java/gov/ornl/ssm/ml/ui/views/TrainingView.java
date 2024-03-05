@@ -116,7 +116,7 @@ public class TrainingView extends VerticalLayout {
 			try {
 
 				// Get the model digest from the backend
-				URL url = new URL(config.getFusekiHost() + "/api/datasets/" + config.getDatasetName() + "/models?pageSize=220");
+				URL url = new URL(config.getFusekiHost() + "/api/collections/" + config.getCollectionName() + "/models?pageSize=220");
 				
 				// How many consumed/total models are in the database
 				int seen = 0;
