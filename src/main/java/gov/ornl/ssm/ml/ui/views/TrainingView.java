@@ -187,11 +187,9 @@ public class TrainingView extends VerticalLayout {
 						reader = new BufferedReader(new InputStreamReader(modelConn.getInputStream()));
 	
 						// Parse out UUID for model
-						int length_of_dataset_endpoint = 9;
 						String modelUuid = urlString.substring(
-							urlString.lastIndexOf("datasets/" + length_of_dataset_endpoint)
+							urlString.lastIndexOf("datasets/")
 						);
-						System.out.println("Model UUID: " + modelUuid);
 
 						// Read the results into the string
 						line = reader.readLine();
@@ -201,8 +199,6 @@ public class TrainingView extends VerticalLayout {
 							line = reader.readLine();
 						}
 
-                        System.out.println("Model: " + modelString);
-						
 						Model newModel = mapper.readValue(modelString, Model.class);
 						newModel.setUuid(modelUuid);
 						models.add(newModel);
