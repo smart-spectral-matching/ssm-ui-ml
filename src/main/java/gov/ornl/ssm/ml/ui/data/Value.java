@@ -1,5 +1,7 @@
 package gov.ornl.ssm.ml.ui.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Object representation of the value in the json
  * 
@@ -8,6 +10,10 @@ package gov.ornl.ssm.ml.ui.data;
  */
 public class Value {
 
+    private String id;
+ 
+    private String type;
+
 	private String number;
 	
 	private String unitref;
@@ -15,10 +21,32 @@ public class Value {
 	private String unitstr;
 	
 	public Value() {
-		setNumber("");
+        setxId("");
+        setxType("");
+        setNumber("");
 		setUnitstr("");
 		unitref = "";
 	}
+
+    @JsonProperty("@id")
+    public String getxId() {
+        return id;
+    }
+ 
+    @JsonProperty("@id")
+    public void setxId(String id) {
+        this.id = id;
+    }
+ 
+    @JsonProperty("@type")
+    public String getxType() {
+        return id;
+    }
+ 
+    @JsonProperty("@type")
+    public void setxType(String type) {
+        this.type = type;
+    }
 
 	public String getNumber() {
 		return number;

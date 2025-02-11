@@ -39,11 +39,11 @@ public class Source {
 		this.doi = doi;
 	}
 
-	public String getRefType() {
+	public String getReftype() {
 		return reftype;
 	}
 
-	public void setRefType(String reftype) {
+	public void setReftype(String reftype) {
 		this.reftype = reftype;
 	}
  

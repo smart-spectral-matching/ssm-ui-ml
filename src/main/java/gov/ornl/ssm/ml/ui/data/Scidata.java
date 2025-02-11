@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class Scidata {
 
-	private List<Dataseries> dataseries;
+	private List<AxisContainer> dataseries;
 	
 	private String description;
 	
@@ -19,21 +19,21 @@ public class Scidata {
 	
 	private String property;
 	
-	private JSONSystem system;
+	private System system;
 	
 	public Scidata() {
-		dataseries = new ArrayList<Dataseries>();
+		dataseries = new ArrayList<AxisContainer>();
 		description = null;
 		methodology = null;
 		property = null;
 		system = null;
 	}
 
-	public List<Dataseries> getDataseries() {
+	public List<AxisContainer> getDataseries() {
 		return dataseries;
 	}
 
-	public void setDataseries(List<Dataseries> dataseries) {
+	public void setDataseries(List<AxisContainer> dataseries) {
 		this.dataseries = dataseries;
 	}
 
@@ -61,11 +61,11 @@ public class Scidata {
 		this.property = property;
 	}
 
-	public JSONSystem getSystem() {
+	public System getSystem() {
 		return system;
 	}
 
-	public void setSystem(JSONSystem system) {
+	public void setSystem(System system) {
 		this.system = system;
 	}
 	

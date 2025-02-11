@@ -1,5 +1,8 @@
 package gov.ornl.ssm.ml.ui.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Object representation of a Methodology from the Model JSON,
  * 
@@ -8,29 +11,51 @@ package gov.ornl.ssm.ml.ui.data;
  */
 public class Methodology {
 
-	private String evaluationMethod;
+	private String technique;
+
+    private String techniqueType;
 	
-	private MethodologyAspect hasMethodologyAspect;
+    private String instrumentType;
 
-	public Methodology() {
-		evaluationMethod = "";
-		hasMethodologyAspect = null;
+    private List<Setting> settings;
+
+    public Methodology() {
+		technique = "";
+		techniqueType = "";
+		instrumentType = "";
+        settings = new ArrayList<Setting>();
 	}
 
-	public String getEvaluationMethod() {
-		return evaluationMethod;
+	public String getTechnique() {
+		return technique;
 	}
 
-	public void setEvaluationMethod(String evalutationMethod) {
-		this.evaluationMethod = evalutationMethod;
+	public void setTechnique(String technique) {
+		this.technique = technique;
 	}
 
-	public MethodologyAspect getHasMethodologyAspect() {
-		return hasMethodologyAspect;
+	public String getTechniqueType() {
+		return techniqueType;
 	}
 
-	public void setHasMethodologyAspect(MethodologyAspect hasMethodologyAspect) {
-		this.hasMethodologyAspect = hasMethodologyAspect;
+	public void setTechniqueType(String techniqueType) {
+		this.techniqueType = techniqueType;
 	}
+
+	public String getInstrumentType() {
+		return instrumentType;
+	}
+
+	public void setInstrumentType(String instrumentType) {
+		this.instrumentType = instrumentType;
+	}
+
+    public List<Setting> getSettings() {
+        return settings;
+    }
+ 
+    public void setSettings(List<Setting> settings) {
+        this.settings = settings;
+    }
 
 }
