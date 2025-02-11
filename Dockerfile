@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM openjdk:17-slim
 
 EXPOSE 8080
 
@@ -14,6 +14,8 @@ RUN pip3 install -U pip
 RUN pip3 install matplotlib notebook numpy psycopg2 scikit-learn 
 RUN pip3 install ssm-ml --extra-index-url https://${GITLAB_USERNAME}:${GITLAB_PASSWORD}@code.ornl.gov/api/v4/projects/7791/packages/pypi/simple
 
+RUN mkdir ssm
+WORKDIR /ssm
 ADD . ./
 
 RUN mvn dependency:go-offline
