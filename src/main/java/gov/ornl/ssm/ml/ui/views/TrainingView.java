@@ -186,6 +186,13 @@ public class TrainingView extends VerticalLayout {
 						modelConn.setRequestProperty("Authorization", "Bearer " + client.getAccessToken().getTokenValue());
 						reader = new BufferedReader(new InputStreamReader(modelConn.getInputStream()));
 	
+						// Parse out UUID for model
+						int length_of_dataset_endpoint = 9;
+						String modelUuid = urlString.substring(
+							urlString.lastIndexOf("datasets/" + length_of_dataset_endpoint)
+						);
+						System.out.println("Model UUID: " + modelUuid);
+
 						// Read the results into the string
 						line = reader.readLine();
 	
@@ -196,7 +203,9 @@ public class TrainingView extends VerticalLayout {
 
                         System.out.println("Model: " + modelString);
 						
-						models.add(mapper.readValue(modelString, Model.class));
+						Model newModel = mapper.readValue(modelString, Model.class);
+						newModel.setUuid(modelUuid);
+						models.add(newModel);
 					}
 				}
 
