@@ -19,8 +19,6 @@ public class Scidata {
 	
 	private String property;
 	
-	private List<Source> sources;
-	
 	private JSONSystem system;
 	
 	public Scidata() {
@@ -28,7 +26,6 @@ public class Scidata {
 		description = null;
 		methodology = null;
 		property = null;
-		sources = new ArrayList<Source>();
 		system = null;
 	}
 
@@ -62,14 +59,6 @@ public class Scidata {
 
 	public void setProperty(String property) {
 		this.property = property;
-	}
-
-	public List<Source> getSources() {
-		return sources;
-	}
-
-	public void setSources(List<Source> sources) {
-		this.sources = sources;
 	}
 
 	public JSONSystem getSystem() {

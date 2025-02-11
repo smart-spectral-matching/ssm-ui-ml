@@ -14,6 +14,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Model {
 
 	private String created;
+
+    private String description;
 	
 	private String full;
 	
@@ -22,7 +24,9 @@ public class Model {
 	private String modified;
 	
 	private List<Feature> invalidFeatures;
-	
+
+    private List<Source> sources;
+
 	private Scidata scidata;
 	
 	private String title;
@@ -33,16 +37,25 @@ public class Model {
 	
 	public Model() {
 		setCreated(null);
+		setDescription(null);
 		full = "";
 		setLabel("");
 		setModified(null);
 		setScidata(null);
+        sources = new ArrayList<Source>();
 		setTitle(null);
 		setUrl(null);
 		setUuid(null);
 		invalidFeatures = new ArrayList<Feature>();
 	}
 
+    public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 	public String getCreated() {
 		return created;
 	}
@@ -76,6 +89,14 @@ public class Model {
 	public void setInvalidFeatures(List<Feature> invalidFeatures) {
 		this.invalidFeatures = invalidFeatures;
 	}
+
+    public List<Source> getSources() {
+        return sources;
+    }
+
+    public void setSources(List<Source> sources) {
+        this.sources = sources;
+    }
 
 	public String getTitle() {
 		return title;

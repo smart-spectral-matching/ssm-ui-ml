@@ -8,28 +8,50 @@ package gov.ornl.ssm.ml.ui.data;
  */
 public class Source {
 
-	private String bibliographicCitation;
+	private String citation;
+
+    private String doi;
 	
-	private String type;
+	private String reftype;
+
+    private String url;
 	
 	public Source() {
-		bibliographicCitation = "";
-		type = "";
+		citation = "";
+		doi = "";
+		reftype = "";
+		url = "";
 	}
 
-	public String getBibliographicCitation() {
-		return bibliographicCitation;
+	public String getCitation() {
+		return citation;
 	}
 
-	public void setBibliographicCitation(String bibliographicCitation) {
-		this.bibliographicCitation = bibliographicCitation;
+	public void setCitation(String citation) {
+		this.citation = citation;
 	}
 
-	public String getType() {
-		return type;
+    public String getDoi() {
+		return doi;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setDoi(String doi) {
+		this.doi = doi;
+	}
+
+	public String getRefType() {
+		return reftype;
+	}
+
+	public void setRefType(String reftype) {
+		this.reftype = reftype;
+	}
+ 
+    public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 }
