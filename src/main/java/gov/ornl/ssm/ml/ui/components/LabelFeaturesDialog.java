@@ -388,8 +388,14 @@ public class LabelFeaturesDialog extends Dialog {
 		moleculeSelect.addValueChangeListener(e -> {
 
 			// Set the molecule to the filter definition
-			filter.setLabel(Arrays.asList("scidata", "system", "facets", "SSM:PRESENT:crystal system:" + e.getValue()));
-
+			filter.setLabel(
+				Arrays.asList(
+					"scidata",
+					"system",
+					"SSM:OPTIONAL:crystalsystem",
+					"SSM:PRESENT:crystal system:" + e.getValue()
+				)
+			);
 			// Search each mode for the selected molecule, applying labels for
 			// prescence/abscence in the GUI
 			for (Model model : models) {
@@ -456,7 +462,7 @@ public class LabelFeaturesDialog extends Dialog {
 		moleculeSelect.addValueChangeListener(e -> {
 
 			// Set the molecule to the filter definition
-			filter.setLabel(Arrays.asList("scidata", "system", "facets", "SSM:PRESENT:atoms:" + e.getValue()));
+			filter.setLabel(Arrays.asList("scidata", "system", "functionalgroup", "SSM:PRESENT:atoms:" + e.getValue()));
 
 			// Search each mode for the selected molecule, applying labels for
 			// prescence/abscence in the GUI
@@ -523,8 +529,14 @@ public class LabelFeaturesDialog extends Dialog {
 		moleculeSelect.addValueChangeListener(e -> {
 
 			// Set the molecule to the filter definition
-			filter.setLabel(Arrays.asList("scidata", "system", "facets", "SSM:PRESENT:structure type:" + e.getValue()));
-
+			filter.setLabel(
+				Arrays.asList(
+					"scidata",
+					"system",
+					"SSM:OPTIONAL:structuretype",
+					"SSM:PRESENT:structure type:" + e.getValue()
+				)
+			);
 			// Search each mode for the selected molecule, applying labels for
 			// prescence/abscence in the GUI
 			for (Model model : models) {
@@ -592,9 +604,14 @@ public class LabelFeaturesDialog extends Dialog {
 		moleculeSelect.addValueChangeListener(e -> {
 
 			// Set the molecule to the filter definition
-			filter.setLabel(Arrays.asList("scidata", "system", "facets",
-					"SSM:PRESENT:uranium coordination chemistry:" + e.getValue()));
-
+			filter.setLabel(
+				Arrays.asList(
+					"scidata",
+					"system",
+					"SSM:OPTIONAL:coordinationchemistry",
+					"SSM:PRESENT:uranium coordination chemistry:" + e.getValue()
+				)
+			);
 			// Search each mode for the selected molecule, applying labels for
 			// prescence/abscence in the GUI
 			for (Model model : models) {
