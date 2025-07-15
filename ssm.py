@@ -95,13 +95,21 @@ if sys.argv[1] == "train":
                      labels)
 
 
-    print("Model " + sys.argv[5] + " trained and saved to database.")
+    #print("Model " + sys.argv[5] + " trained and saved to database.")
 
 elif sys.argv[1] == 'predict':
 
     # Load the filter's information out of the database
-    filter_json = json.loads(ssmml.load_filter(sys.argv[2], os.environ["ML_DATABASE_HOST"], os.environ["ML_DATABASE_PORT"],
-                     os.environ["ML_DATABASE_NAME"], os.environ["ML_DATABASE_USER"], os.environ["ML_DATABASE_PASSWORD"]))
+    filter_json = json.loads(
+        ssmml.load_filter(
+            sys.argv[2],
+            os.environ["ML_DATABASE_HOST"],
+            os.environ["ML_DATABASE_PORT"],
+            os.environ["ML_DATABASE_NAME"],
+            os.environ["ML_DATABASE_USER"],
+            os.environ["ML_DATABASE_PASSWORD"]
+        )
+    )
 
     filters = ssmml.construct_filters(filter_json)
 
@@ -109,15 +117,19 @@ elif sys.argv[1] == 'predict':
     features = []
 
     # Wrap the json-converter service output in a "scidata" node
-    full_json = [{'scidata' : json.loads(sys.argv[3])}]
+    #full_json = [{'scidata' : json.loads(sys.argv[3])}]
+    full_json = [json.loads(sys.argv[3])]
 
     # Convert all spectra to numbers if they're strings
+    """
     for dataseries in full_json[0]['scidata']['dataseries']:
         for i, value in enumerate(dataseries[next(iter(dataseries))]['parameter']['numericValueArray'][0]['numberArray']):
             dataseries[next(iter(dataseries))]['parameter']['numericValueArray'][0]['numberArray'][i] = float(value)
+    """
 
     labels, prob = ssmml.predict(filters, full_json, sys.argv[2], os.environ["ML_DATABASE_HOST"], os.environ["ML_DATABASE_PORT"],
                      os.environ["ML_DATABASE_NAME"], os.environ["ML_DATABASE_USER"], os.environ["ML_DATABASE_PASSWORD"])
+
 
     # Output label and probability for the first class
     print("Sample is of class '" + str(labels[0]) + "' with confidence " + str(prob[0] * 100) + "%")

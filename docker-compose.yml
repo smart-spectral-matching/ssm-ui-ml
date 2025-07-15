@@ -1,0 +1,15 @@
+services:
+  ssm-ui-ml: 
+    build:
+      context: .
+    restart: unless-stopped
+    network_mode: "host"
+    environment:
+      PROFILE: "dev"
+      ML_DATABASE_HOST: "ssm-service-ml-database"
+      ML_DATABASE_PORT: 5432
+      ML_DATABASE_NAME: "ssm"
+      ML_DATABASE_USER: "ssm"
+      ML_DATABASE_PASSWORD: "password"
+ 
+
