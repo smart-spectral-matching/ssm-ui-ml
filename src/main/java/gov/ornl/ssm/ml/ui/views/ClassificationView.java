@@ -163,7 +163,7 @@ public class ClassificationView extends VerticalLayout {
 			//Send the uploaded file to the parser service
 			HttpEntity entity = MultipartEntityBuilder.create().addPart("upload_file", new InputStreamBody(buffer.getInputStream(), e.getFileName())).build();
 			
-			HttpPost request = new HttpPost(config.getFusekiHost() + "/api/file-converter/convert/json");
+			HttpPost request = new HttpPost(config.getFileConverterHost() + "/convert/json");
 		    request.setEntity(entity);
 
 		    HttpClient client = HttpClientBuilder.create().build();

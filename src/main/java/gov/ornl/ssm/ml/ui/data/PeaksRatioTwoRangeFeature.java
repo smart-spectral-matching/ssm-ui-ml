@@ -113,7 +113,7 @@ public class PeaksRatioTwoRangeFeature implements Feature {
 				for(Model model : models) {
 					
 					//Get the x axis
-					List<Double> axis = model.getScidata().getDataseries().get(0).getxAxis().getParameter().getNumericValueArray().getNumberArray();
+					List<Double> axis = model.getScidata().getDataseries().get(0).getxAxis().getParameter().getNumericValueArray().get(0).getNumberArray();
 					
 					//If the defined range is entirely outside the axis's range, this model is invalid.
 					if(axis.get(0) > end1Field.getValue() || axis.get(axis.size() - 1) < start1Field.getValue()) {

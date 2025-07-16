@@ -116,7 +116,7 @@ public class TrainingView extends VerticalLayout {
 			try {
 
 				// Get the model digest from the backend
-				URL url = new URL(config.getFusekiHost() + "/api/collections/" + config.getCollectionName() + "/models?pageSize=220");
+				URL url = new URL(config.getFusekiHost() + "/api/collections/" + config.getCollectionName() + "/datasets?pageSize=220");
 				
 				// How many consumed/total models are in the database
 				int seen = 0;
@@ -186,6 +186,11 @@ public class TrainingView extends VerticalLayout {
 						modelConn.setRequestProperty("Authorization", "Bearer " + client.getAccessToken().getTokenValue());
 						reader = new BufferedReader(new InputStreamReader(modelConn.getInputStream()));
 	
+						// Parse out UUID for model
+						String modelUuid = urlString.substring(
+							urlString.lastIndexOf("datasets/")
+						);
+
 						// Read the results into the string
 						line = reader.readLine();
 	
@@ -193,8 +198,10 @@ public class TrainingView extends VerticalLayout {
 							modelString += line;
 							line = reader.readLine();
 						}
-						
-						models.add(mapper.readValue(modelString, Model.class));
+
+						Model newModel = mapper.readValue(modelString, Model.class);
+						newModel.setUuid(modelUuid);
+						models.add(newModel);
 					}
 				}
 

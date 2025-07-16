@@ -1,6 +1,9 @@
 package gov.ornl.ssm.ml.ui.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Object representation of a Parameter from the Model JSON.
@@ -14,12 +17,28 @@ public class Parameter {
 
 	private String quantity;
 
-	private ValueArray numericValueArray;
+	private String units;
+
+    @JsonProperty("datatype")
+	private String dataType;
+
+    @JsonProperty("numericValueArray")
+	private List<ValueArray> numericValueArray;
 
 	public Parameter() {
+		dataType = null;
 		property = null;
 		quantity = null;
-		numericValueArray = new ValueArray();
+		units = null;
+		numericValueArray = new ArrayList<ValueArray>();
+	}
+
+	public String getDataType() {
+		return dataType;
+	}
+
+	public void setDataType(String dataType) {
+		this.dataType = dataType;
 	}
 
 	public String getProperty() {
@@ -38,11 +57,19 @@ public class Parameter {
 		this.quantity = quantity;
 	}
 
-	public ValueArray getNumericValueArray() {
+	public String getUnits() {
+		return units;
+	}
+
+	public void setUnits(String units) {
+		this.units = units;
+	}
+
+	public List<ValueArray> getNumericValueArray() {
 		return numericValueArray;
 	}
 
-	public void setNumericValueArray(ValueArray valuearray) {
+	public void setNumericValueArray(List<ValueArray> valuearray) {
 		this.numericValueArray = valuearray;
 	}
 }

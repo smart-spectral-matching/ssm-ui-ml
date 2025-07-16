@@ -1,5 +1,7 @@
 package gov.ornl.ssm.ml.ui.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Object representation of the Setting in the json.
  * 
@@ -8,24 +10,43 @@ package gov.ornl.ssm.ml.ui.data;
  */
 public class Setting {
 
-	private Value hasValue;
-	
-	private String property;
+
+    private String id;
+
+    private String type;
+
+    private String property;
 	
 	private String quantity;
 	
-	public Setting() {
-		setHasValue(null);
+	private Value value;
+
+    public Setting() {
+		setxId("");
+		setxType("");
 		setProperty(null);
 		setQuantity(null);
+		setValue(null);
 	}
 
-	public Value getHasValue() {
-		return hasValue;
+    @JsonProperty("@id")
+	public String getxId() {
+		return id;
 	}
 
-	public void setHasValue(Value hasValue) {
-		this.hasValue = hasValue;
+    @JsonProperty("@id")
+	public void setxId(String id) {
+		this.id = id;
+	}
+
+    @JsonProperty("@type")
+	public String getxType() {
+		return id;
+	}
+
+    @JsonProperty("@type")
+	public void setxType(String type) {
+		this.type = type;
 	}
 
 	public String getProperty() {
@@ -43,6 +64,12 @@ public class Setting {
 	public void setQuantity(String quantity) {
 		this.quantity = quantity;
 	}
-	
-	
+
+    public Value getValue() {
+        return value;
+    }
+
+    public void setValue(Value value) {
+        this.value = value;
+    }
 }

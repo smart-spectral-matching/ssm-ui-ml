@@ -20,14 +20,18 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.ValueProvider;
 
 import gov.ornl.ssm.ml.ui.UIConfiguration;
-import gov.ornl.ssm.ml.ui.data.Facet;
+import gov.ornl.ssm.ml.ui.data.CoordinationChemistry;
+import gov.ornl.ssm.ml.ui.data.CrystalSystem;
 import gov.ornl.ssm.ml.ui.data.Feature;
 import gov.ornl.ssm.ml.ui.data.Filter;
+import gov.ornl.ssm.ml.ui.data.FunctionalGroup;
 import gov.ornl.ssm.ml.ui.data.Model;
 import gov.ornl.ssm.ml.ui.data.PeakFixedDistanceFeature;
 import gov.ornl.ssm.ml.ui.data.PeakLocationRangeFeature;
 import gov.ornl.ssm.ml.ui.data.PeakRatioRangeFeature;
 import gov.ornl.ssm.ml.ui.data.PeaksRatioTwoRangeFeature;
+import gov.ornl.ssm.ml.ui.data.StructureType;
+import gov.ornl.ssm.ml.ui.data.System;
 
 /**
  * Dialog for defining the Label and Features for a Filter.
@@ -43,7 +47,7 @@ public class LabelFeaturesDialog extends Dialog {
 	private HashSet<String> crystals = null;
 
 	/**
-	 * List of all uranium chemistry coordinations named in any Facet in any Model
+	 * List of all uranium chemistry coordinations named in any System in any Model
 	 */
 	private HashSet<String> coordinations = null;
 
@@ -73,7 +77,7 @@ public class LabelFeaturesDialog extends Dialog {
 	private List<Model> models;
 
 	/**
-	 * List of all unique molecules named in any Facet in any Model
+	 * List of all unique molecules named in any System in any Model
 	 */
 	private HashSet<String> molecules = null;
 
@@ -83,7 +87,7 @@ public class LabelFeaturesDialog extends Dialog {
 	private VerticalLayout labelLayout;
 
 	/**
-	 * List of all unique structures named in any Facet in any Model
+	 * List of all unique structures named in any System in any Model
 	 */
 	private HashSet<String> structures = null;
 
@@ -360,10 +364,9 @@ public class LabelFeaturesDialog extends Dialog {
 			crystals = new HashSet<String>();
 
 			for (Model model : models) {
-				for (Facet facet : model.getScidata().getSystem().getFacets()) {
-					if (facet.getCrystalSystem() != null) {
-						crystals.add(facet.getCrystalSystem());
-					}
+				CrystalSystem crystalsystem = model.getScidata().getSystem().getCrystalSystem();
+				if(crystalsystem != null) {
+					crystals.add(crystalsystem.getCrystalSystem());
 				}
 			}
 		}
@@ -385,21 +388,26 @@ public class LabelFeaturesDialog extends Dialog {
 		moleculeSelect.addValueChangeListener(e -> {
 
 			// Set the molecule to the filter definition
-			filter.setLabel(Arrays.asList("scidata", "system", "facets", "SSM:PRESENT:crystal system:" + e.getValue()));
-
+			filter.setLabel(
+				Arrays.asList(
+					"scidata",
+					"system",
+					"SSM:OPTIONAL:crystalsystem",
+					"SSM:PRESENT:crystal system:" + e.getValue()
+				)
+			);
 			// Search each mode for the selected molecule, applying labels for
 			// prescence/abscence in the GUI
 			for (Model model : models) {
 				boolean found = false;
 				String value = "";
 
-				for (Facet facet : model.getScidata().getSystem().getFacets()) {
-					if (facet.getCrystalSystem() != null) {
+                CrystalSystem crystalsystem = model.getScidata().getSystem().getCrystalSystem();
+                    if(crystalsystem != null) {
 						found = true;
-						value = facet.getCrystalSystem();
+						value = crystalsystem.getCrystalSystem();
 						break;
 					}
-				}
 
 				if (found) {
 					model.setLabel(value);
@@ -409,7 +417,6 @@ public class LabelFeaturesDialog extends Dialog {
 
 				// Update the GUI
 				grid.setItems(models);
-
 			}
 		});
 
@@ -429,9 +436,10 @@ public class LabelFeaturesDialog extends Dialog {
 			molecules = new HashSet<String>();
 
 			for (Model model : models) {
-				for (Facet facet : model.getScidata().getSystem().getFacets()) {
-					if (facet.getAtoms() != null) {
-						molecules.add(facet.getAtoms());
+				List<FunctionalGroup> functionalGroups = model.getScidata().getSystem().getFunctionalGroups();
+				for (FunctionalGroup group : functionalGroups) {
+					if (group.getAtoms() != null) {
+						molecules.add(group.getAtoms());
 					}
 				}
 			}
@@ -454,15 +462,16 @@ public class LabelFeaturesDialog extends Dialog {
 		moleculeSelect.addValueChangeListener(e -> {
 
 			// Set the molecule to the filter definition
-			filter.setLabel(Arrays.asList("scidata", "system", "facets", "SSM:PRESENT:atoms:" + e.getValue()));
+			filter.setLabel(Arrays.asList("scidata", "system", "functionalgroup", "SSM:PRESENT:atoms:" + e.getValue()));
 
 			// Search each mode for the selected molecule, applying labels for
 			// prescence/abscence in the GUI
 			for (Model model : models) {
 				boolean found = false;
 
-				for (Facet facet : model.getScidata().getSystem().getFacets()) {
-					if (e.getValue().equals(facet.getAtoms())) {
+				List<FunctionalGroup> functionalGroups = model.getScidata().getSystem().getFunctionalGroups();
+				for (FunctionalGroup group : functionalGroups) {
+					if (e.getValue().equals(group.getAtoms())) {
 						found = true;
 						break;
 					}
@@ -496,10 +505,9 @@ public class LabelFeaturesDialog extends Dialog {
 			structures = new HashSet<String>();
 
 			for (Model model : models) {
-				for (Facet facet : model.getScidata().getSystem().getFacets()) {
-					if (facet.getStructureType() != null) {
-						structures.add(facet.getStructureType());
-					}
+				StructureType structureType = model.getScidata().getSystem().getStructureType();
+				if (structureType.getStructureType() != null) {
+				    structures.add(structureType.getStructureType());
 				}
 			}
 		}
@@ -521,20 +529,25 @@ public class LabelFeaturesDialog extends Dialog {
 		moleculeSelect.addValueChangeListener(e -> {
 
 			// Set the molecule to the filter definition
-			filter.setLabel(Arrays.asList("scidata", "system", "facets", "SSM:PRESENT:structure type:" + e.getValue()));
-
+			filter.setLabel(
+				Arrays.asList(
+					"scidata",
+					"system",
+					"SSM:OPTIONAL:structuretype",
+					"SSM:PRESENT:structure type:" + e.getValue()
+				)
+			);
 			// Search each mode for the selected molecule, applying labels for
 			// prescence/abscence in the GUI
 			for (Model model : models) {
 				boolean found = false;
 				String value = "";
 
-				for (Facet facet : model.getScidata().getSystem().getFacets()) {
-					if (facet.getStructureType() != null) {
-						found = true;
-						value = facet.getStructureType();
-						break;
-					}
+				StructureType structureType = model.getScidata().getSystem().getStructureType();
+				if (structureType.getStructureType() != null) {
+					found = true;
+					value = structureType.getStructureType();
+					break;
 				}
 
 				if (found) {
@@ -565,9 +578,10 @@ public class LabelFeaturesDialog extends Dialog {
 			coordinations = new HashSet<String>();
 
 			for (Model model : models) {
-				for (Facet facet : model.getScidata().getSystem().getFacets()) {
-					if (facet.getUraniumCoordinationChemistry() != null) {
-						coordinations.add(facet.getUraniumCoordinationChemistry());
+				List<CoordinationChemistry> coordinationList =  model.getScidata().getSystem().getCoordinationChemistry();
+				for(CoordinationChemistry coordination : coordinationList) {
+					if (coordination.getCoordination() != null) {
+						coordinations.add(coordination.getCoordination());
 					}
 				}
 			}
@@ -590,18 +604,23 @@ public class LabelFeaturesDialog extends Dialog {
 		moleculeSelect.addValueChangeListener(e -> {
 
 			// Set the molecule to the filter definition
-			filter.setLabel(Arrays.asList("scidata", "system", "facets",
-					"SSM:PRESENT:uranium coordination chemistry:" + e.getValue()));
-
+			filter.setLabel(
+				Arrays.asList(
+					"scidata",
+					"system",
+					"SSM:OPTIONAL:coordinationchemistry",
+					"SSM:PRESENT:uranium coordination chemistry:" + e.getValue()
+				)
+			);
 			// Search each mode for the selected molecule, applying labels for
 			// prescence/abscence in the GUI
 			for (Model model : models) {
 				String value = "None";
 
-				for (Facet facet : model.getScidata().getSystem().getFacets()) {
-					if (facet.getUraniumCoordinationChemistry() != null) {
-						value = facet.getUraniumCoordinationChemistry();
-					}
+				// TODO: can have multple coordinations; need to draw on screen
+				CoordinationChemistry coordination =  model.getScidata().getSystem().getCoordinationChemistry().get(0);
+				if (coordination.getCoordination() != null) {
+					value = coordination.getCoordination();
 				}
 
 				model.setLabel(value);
