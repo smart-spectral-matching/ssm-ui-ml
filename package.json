@@ -2,9 +2,13 @@
   "name": "no-name",
   "license": "UNLICENSED",
   "dependencies": {
-    "@polymer/polymer": "3.2.0",
+    "@polymer/polymer": "3.5.1",
     "@webcomponents/webcomponentsjs": "^2.2.10",
-    "@vaadin/flow-deps": "./target/frontend"
+    "@vaadin/flow-deps": "./target/frontend",
+    "@vaadin/common-frontend": "0.0.17",
+    "construct-style-sheets-polyfill": "3.1.0",
+    "lit": "2.6.1",
+    "@vaadin/router": "1.7.4"
   },
   "devDependencies": {
     "webpack": "4.30.0",
@@ -14,7 +18,47 @@
     "copy-webpack-plugin": "5.1.0",
     "compression-webpack-plugin": "3.0.1",
     "webpack-merge": "4.2.2",
-    "raw-loader": "3.0.0"
+    "raw-loader": "3.0.0",
+    "strip-css-comments": "5.0.0",
+    "workbox-build": "6.5.4",
+    "glob": "7.2.3",
+    "@rollup/plugin-replace": "5.0.2",
+    "async": "3.2.2",
+    "mkdirp": "1.0.4",
+    "workbox-core": "6.5.4",
+    "vite": "4.1.3",
+    "rollup-plugin-brotli": "3.1.0",
+    "@rollup/pluginutils": "5.0.2",
+    "vite-plugin-checker": "0.5.5",
+    "workbox-precaching": "6.5.4",
+    "transform-ast": "2.4.4",
+    "typescript": "4.9.3"
   },
-  "vaadinAppPackageHash": "a75bb208436936a4572f78609ed001be297895da7c8ceff8f1b5b52bfead3dd7"
+  "vaadinAppPackageHash": "a75bb208436936a4572f78609ed001be297895da7c8ceff8f1b5b52bfead3dd7",
+  "vaadin": {
+    "dependencies": {
+      "@vaadin/common-frontend": "0.0.17",
+      "construct-style-sheets-polyfill": "3.1.0",
+      "lit": "2.6.1",
+      "@vaadin/router": "1.7.4",
+      "@polymer/polymer": "3.5.1"
+    },
+    "devDependencies": {
+      "strip-css-comments": "5.0.0",
+      "workbox-build": "6.5.4",
+      "glob": "7.2.3",
+      "@rollup/plugin-replace": "5.0.2",
+      "async": "3.2.2",
+      "mkdirp": "1.0.4",
+      "workbox-core": "6.5.4",
+      "vite": "4.1.3",
+      "rollup-plugin-brotli": "3.1.0",
+      "@rollup/pluginutils": "5.0.2",
+      "vite-plugin-checker": "0.5.5",
+      "workbox-precaching": "6.5.4",
+      "transform-ast": "2.4.4",
+      "typescript": "4.9.3"
+    },
+    "hash": ""
+  }
 }

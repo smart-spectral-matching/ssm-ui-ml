@@ -31,11 +31,13 @@ public class MainScreen extends VerticalLayout {
 		//Links to each capability
 		RouterLink trainingLink = new RouterLink("Train a New Filter", TrainingView.class);
 		RouterLink classifyLink = new RouterLink("Classify a Sample", ClassificationView.class);
+		RouterLink matchLink = new RouterLink("Find Matching Spectra", MatchingView.class);
 		Anchor logout = new Anchor("logout", "Logout");
 		
 		//Layout
 		add(trainingLink);
 		add(classifyLink);
+		add(matchLink);
 		add(logout);
 
 	}

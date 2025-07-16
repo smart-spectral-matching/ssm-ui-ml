@@ -153,11 +153,21 @@ public class TrainingView extends VerticalLayout {
 					
 					// Get the first result page's url
 					String next = digest.get("next").asText();
+					
+					// Fix spell error in BATS return value
+					next = next.replace("colections", "collections");
+					
+					// Fix the case where the next url starts with :///
+					if (!next.startsWith("http")) {
+						next = "http://" + next;
+					}
+
+					System.out.println("URL:" +  next);
 					url = new URL(next);
 					
 					// Strip out the pagination data, leaving only the raw models
 					String modelsString = mapper.writeValueAsString(digest.get("data"));
-	
+					
 					// Convert the model data back to JSON, then read the JSON into classes
 					List<Model> tempModels = mapper.readValue(modelsString,
 							mapper.getTypeFactory().constructCollectionType(List.class, Model.class));
@@ -178,9 +188,13 @@ public class TrainingView extends VerticalLayout {
 						if(urlString.endsWith("/")) {
 							urlString = urlString.substring(0, urlString.lastIndexOf("/"));
 						}
+						if(!urlString.startsWith("http")) {
+							urlString = "http://" + urlString;
+						}
 						
 						// Get the model digest from the backend
 						URL modelUrl = new URL(urlString);
+						System.out.println("URL String: " + urlString);
 						HttpURLConnection modelConn = (HttpURLConnection) modelUrl.openConnection();
 						modelConn.setRequestMethod("GET");
 						modelConn.setRequestProperty("Authorization", "Bearer " + client.getAccessToken().getTokenValue());

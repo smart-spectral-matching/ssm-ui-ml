@@ -11,12 +11,10 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.4</version>
+		<version>3.4.3</version>
 	</parent>
 
 	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -29,10 +27,15 @@
 		<junit.jupiter.version>5.9.2</junit.jupiter.version>
 		<junit-platform-maven-plugin.version>1.0.0-M5</junit-platform-maven-plugin.version>
 		<jacoco.version>0.8.4</jacoco.version>
+		
+   		<java.version>20</java.version>
+   		
+ 	   <maven.compiler.source>${java.version}</maven.compiler.source>
+   	   <maven.compiler.target>${java.version}</maven.compiler.target>
 	</properties>
 
 	<prerequisites>
-		<maven>3</maven>
+		<maven>3.9.9</maven>
 	</prerequisites>
 
 	<pluginRepositories>
@@ -147,19 +150,16 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
-            <version>3.0.4</version>
             <scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-autoconfigure</artifactId>
-            <version>3.0.4</version>
         </dependency>
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-oauth2-client</artifactId>
-            <version>3.0.4</version>
         </dependency>
 		<!-- Gson: Java to Json conversion -->
 		<dependency>
@@ -189,7 +189,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
-            <version>3.0.4</version>
             <optional>true</optional>
 		</dependency>
 		
@@ -256,6 +255,10 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version> 3.7.0</version>
+				<configuration>
+			        <source>25</source>  <!-- same as <java.version> -->
+			        <target>25</target>    <!-- same as <java.version> -->
+			    </configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -370,6 +373,7 @@
 						</executions>
 					</plugin>
 				</plugins>
+				
 			</build>
 		</profile>
 	</profiles>
