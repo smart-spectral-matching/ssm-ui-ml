@@ -1,9 +1,15 @@
 FROM openjdk:20-slim
 
-EXPOSE 8080
+EXPOSE 8082
 
 ARG PYTHON_VERSION="3.8.20"
 ENV PROFILE=${PROFILE:-"dev"}
+
+ENV ML_DATABASE_HOST="localhost"
+ENV ML_DATABASE_PORT=5432
+ENV ML_DATABASE_NAME="ssm"
+ENV ML_DATABASE_USER="ssm"
+ENV ML_DATABASE_PASSWORD="password"
 
 RUN mkdir -p /usr/share/man/man1/
 
@@ -29,6 +35,8 @@ RUN apt-get update -y \
         npm \
         python3-dev \
         python3-pip \
+        python-is-python3 \
+        wget \
         zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
@@ -41,10 +49,11 @@ RUN mkdir /venv
 RUN python3 -m venv /ssm/venv
 #RUN pip3 install ssm-ml --extra-index-url https://${GITLAB_USERNAME}:${GITLAB_PASSWORD}@code.ornl.gov/api/v4/projects/7791/packages/pypi/simple
 #COPY ssm_ml-0.1.0.tar.gz ./
-#RUN /ssm/venv/bin/pip install ./ssm_ml-0.1.0.tar.gz
-RUN python3 -m pip install matplotlib notebook numpy psycopg2 scikit-learn 
-COPY --from=ssm /code/dist/ssm_service_ml-0.1.1-py3-none-any.whl ./ssm_service_ml-0.1.1-py3-none-any.whl
-RUN python3 -m pip install ssm_service_ml-0.1.1-py3-none-any.whl
+RUN wget https://github.com/smart-spectral-matching/ssm-service-ml/archive/refs/tags/v0.1.0.tar.gz \
+    && tar -xvzf v0.1.0.tar.gz \
+    && cd ssm-service-ml-0.1.0 \
+    && python -m pip install .
+#RUN python3 -m pip install matplotlib notebook numpy psycopg2 scikit-learn 
 
 ADD . ./
 

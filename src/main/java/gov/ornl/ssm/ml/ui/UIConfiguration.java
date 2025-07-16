@@ -37,8 +37,8 @@ public class UIConfiguration {
 	
 	@Value("${fuseki.host}")
 	private String fusekiHost;
-	
-	@Value("${file.converter.host}")
+
+	@Value("${file-converter.host}")
 	private String fileConverterHost;
 	
 	public String getDatabaseHost() {
@@ -68,7 +68,7 @@ public class UIConfiguration {
 	public String getFusekiHost() {
 		return fusekiHost;
 	}
-	
+
 	public String getFileConverterHost() {
 		return fileConverterHost;
 	}
