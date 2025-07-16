@@ -1,5 +1,6 @@
 import json
 import io
+import math
 import os
 import pickle
 import psycopg2
@@ -112,8 +113,159 @@ elif sys.argv[1] == 'predict':
         for i, value in enumerate(dataseries[next(iter(dataseries))]['parameter']['numericValueArray'][0]['numberArray']):
             dataseries[next(iter(dataseries))]['parameter']['numericValueArray'][0]['numberArray'][i] = float(value)
     
+  #  for i, value in  enumerate(full_json[0]['scidata']['dataseries'][0]["x-axis"]["parameter"]["numericValueArray"][0]["numberArray"])
+    
     labels, prob = ssmml.predict(filters, full_json, sys.argv[2], os.environ["ML_DATABASE_HOST"], os.environ["ML_DATABASE_PORT"],
                      os.environ["ML_DATABASE_NAME"], os.environ["ML_DATABASE_USER"], os.environ["ML_DATABASE_PASSWORD"])
 
     # Output label and probability for the first class
     print("Sample is of class '" + str(labels[0]) + "' with confidence " + str(prob[0] * 100) + "%")
+    
+elif sys.argv[1] == 'match':
+    
+    data = json.loads(sys.argv[2])
+    series = data["scidata"]["dataseries"]
+    unknown = [series[0]["x-axis"]["parameter"]["numericValueArray"][0]["numberArray"], series[1]["y-axis"]["parameter"]["numericValueArray"][0]["numberArray"]]
+    
+    # Convert user file to floats
+    for i in range(len(unknown[0])):
+        unknown[0][i] = float(unknown[0][i])
+        unknown[1][i] = float(unknown[1][i])
+        
+    
+    fuseki_host = sys.argv[3]
+    
+    #Get the list of all models
+    dataset_uuids = []
+    #global_uuid = json.loads(urllib.request.urlopen(fuseki_host + "/api/datasets").read().decode())[-1]
+    global_uuid = json.loads(urllib.request.urlopen(fuseki_host + "/api/collections").read().decode())[-1]
+
+    #uuid_url = urllib.request.urlopen(fuseki_host + "/api/datasets/" + global_uuid + "/models/uuids")
+    uuid_url = urllib.request.urlopen(fuseki_host + "/api/collections/" + global_uuid + "/datasets/uuids")
+    dataset_uuids_json = uuid_url.read().decode()
+    dataset_uuids = json.loads(dataset_uuids_json)
+    
+    #All the datasets from the database
+    datasets = []
+    
+    #Series for each dataset in the database
+    dataset_series = []
+    
+    #Get each dataset and label axes appropriately
+    for uuid in dataset_uuids:
+        dataset_url = urllib.request.urlopen(uuid.replace("10.64.198.148", "ssm-dev.ornl.gov:8080"))
+        dataset = json.loads(dataset_url.read().decode())
+        datasets.append(dataset)
+        dataset_series.append([dataset["scidata"]["dataseries"][0]["x-axis"]["parameter"]["numericValueArray"][0]["numberArray"],
+                              dataset["scidata"]["dataseries"][1]["y-axis"]["parameter"]["numericValueArray"][0]["numberArray"]])
+    
+    # Convert data series to floats
+    for ds in dataset_series:
+        for i in range(len(ds[0])):
+            ds[0][i] = float(ds[0][i])
+            ds[1][i] = float(ds[1][i])
+    
+    # Series after being cast into the right range for comparision with user file
+    features = []
+    
+    # Normalize the user and database series into the same y-axis range
+    y_axes = []
+    y_axes.append(unknown[1])
+    
+    # For each data series, interpolate it into the same x axis as the user file
+    for ds in dataset_series:
+        feature = ssmml.interpolate_spectra(unknown, ds)
+        features.append(feature)
+        y_axes.append(feature[1])
+
+    norm_features = ssmml.normalize_features(y_axes)
+
+    unknown[1] = norm_features[0]
+    
+    for i in range(len(features)):
+        features[i][1] = norm_features[i + 1]
+    
+    # Calculate the uned score between the user file and each data series
+    uneds = []
+    
+    for i in range(len(dataset_series)):
+        if i != 0:
+            uneds.append(ssmml.unit_normalized_euclidean_distance(unknown, features[i]))
+            
+    # Get the lowest 5 uned scores' indices
+    uned_indices = np.argsort(np.array(uneds))[:2]
+    
+    pces = []
+    
+    for i in range(len(dataset_series)):
+        if i != 0:
+            pces.append(ssmml.pearson_correlation_coefficient(unknown, features[i]))  
+            
+    # Get the lowest 5 uned scores' indices
+    pces_indices = np.argsort(-np.array(pces))[:2]
+    
+    secs = []
+    
+    for i in range(len(dataset_series)):
+        if i != 0:
+            secs.append(ssmml.squared_euclidean_cosine(unknown, features[i]))
+            
+    # Get the lowest 5 uned scores' indices
+    secs_indices = np.argsort(np.array(secs))[:2]
+    
+    sfoecs = []
+    
+    for i in range(len(dataset_series)):
+        if i != 0:
+            sfoecs.append(ssmml.squared_first_difference_euclidean_cosine(unknown, features[i]))
+            
+    # Get the lowest 5 uned scores' indices
+    sfoecs_indices = np.argsort(-np.array(sfoecs))[:2]
+    
+    # Take weighed sum of all criterea
+    total = []
+    
+    for i in range(len(pces)):
+        t = (pces[i] + 1) / 2
+        t += (secs[i] / math.sqrt(len(unknown[0])))
+        t += sfoecs[i]
+        t += (uneds[i] / math.sqrt(len(unknown[0])))
+        total.append(t)
+        
+    total_indices = np.argsort(-np.array(total))[:2]
+    
+    print("Overall best match:")
+    
+    for i in total_indices:
+        print(datasets[i]["title"])
+        print(dataset_uuids[i])
+    
+    print("Pearson Correlation Coefficient:")
+    
+    for i in pces_indices:
+        print(datasets[i]["title"])
+        print(dataset_uuids[i])
+        
+    print("Squared Euclidean Cosine:")
+    
+    for i in secs_indices:
+        print(datasets[i]["title"])
+        print(dataset_uuids[i])
+        
+    print("Squared First Order Euclidean Cosine:")
+    
+    for i in sfoecs_indices:
+        print(datasets[i]["title"])
+        print(dataset_uuids[i])    
+
+    print("Unit Normalized Euclidean Distance:")
+
+    # Print the title and URL for each data series selected
+    for i in uned_indices:
+        print(datasets[i]["title"])
+        print(dataset_uuids[i])
+        
+                
+        
+    
+
