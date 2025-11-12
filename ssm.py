@@ -208,7 +208,7 @@ elif sys.argv[1] == 'match':
             uneds.append(ssmml.unit_normalized_euclidean_distance(unknown, features[i]))
             
     # Get the lowest 5 uned scores' indices
-    uned_indices = np.argsort(np.array(uneds))[:2]
+    uned_indices = np.argsort(np.array(uneds))[:5]
     
     pces = []
     
@@ -217,7 +217,7 @@ elif sys.argv[1] == 'match':
             pces.append(ssmml.pearson_correlation_coefficient(unknown, features[i]))  
             
     # Get the lowest 5 uned scores' indices
-    pces_indices = np.argsort(-np.array(pces))[:2]
+    pces_indices = np.argsort(-np.array(pces))[:5]
     
     secs = []
     
@@ -226,7 +226,7 @@ elif sys.argv[1] == 'match':
             secs.append(ssmml.squared_euclidean_cosine(unknown, features[i]))
             
     # Get the lowest 5 uned scores' indices
-    secs_indices = np.argsort(np.array(secs))[:2]
+    secs_indices = np.argsort(np.array(secs))[:5]
     
     sfoecs = []
     
@@ -235,7 +235,7 @@ elif sys.argv[1] == 'match':
             sfoecs.append(ssmml.squared_first_difference_euclidean_cosine(unknown, features[i]))
             
     # Get the lowest 5 uned scores' indices
-    sfoecs_indices = np.argsort(-np.array(sfoecs))[:2]
+    sfoecs_indices = np.argsort(-np.array(sfoecs))[:5]
     
     # Take weighed sum of all criterea
     total = []
@@ -247,7 +247,7 @@ elif sys.argv[1] == 'match':
         t += (uneds[i] / math.sqrt(len(unknown[0])))
         total.append(t)
         
-    total_indices = np.argsort(-np.array(total))[:2]
+    total_indices = np.argsort(-np.array(total))[:5]
     
     print("Overall best match:")
     

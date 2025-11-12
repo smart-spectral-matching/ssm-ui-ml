@@ -23,6 +23,7 @@ import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Pre;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
@@ -95,7 +96,7 @@ public class MatchingView extends VerticalLayout {
 		Button runButton = new Button("Get Matching Spectra");
 		
 		// Label to show the output
-		VerticalLayout outputLayout = new VerticalLayout();
+		HorizontalLayout outputLayout = new HorizontalLayout();
 		Pre outputLabel = new Pre();
 		
 		runButton.addClickListener(e -> {
@@ -127,8 +128,14 @@ public class MatchingView extends VerticalLayout {
 					// If this line is the link, we have enough data to display the named link
 					if (line.startsWith("http")) {
 						outputLayout.add(new Anchor(line, prevLine));
-						// FIXME Need to figure out the link to the one in the GUI
-						outputLayout.add(new Anchor(prevLine, "View on Web"));
+						
+						// FIXME Need to sub out curies for when we have multiple datasets
+						// Get the link to the catalog GUI
+						String guiLink = line.substring(0, line.indexOf('/') + 1);
+						guiLink += "detail/curies";
+						guiLink += line.substring(line.lastIndexOf('/'));
+						
+						outputLayout.add(new Anchor(guiLink, "View on Web"));
 					} else if (!prevLine.startsWith("http")) {
 						
 						// If the previous line wasn't a link and this line wasn't a link, then the previous line was
