@@ -1,4 +1,4 @@
-FROM openjdk:20-slim
+FROM openjdk:20-ea-20-slim
 
 EXPOSE 8082
 
